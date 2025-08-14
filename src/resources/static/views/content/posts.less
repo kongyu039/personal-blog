@@ -1,0 +1,31 @@
+// src/resources/static/views/content/posts.less
+#admin-root {
+  display: flex;
+  flex-direction: column;
+
+  .admin-form {
+    padding: 5px;
+
+    .layui-inline {
+      .layui-form-label {
+        width: 80px;display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .layui-input-inline.summary {width: 280px;}
+
+      .layui-input-inline.category { width: 105px; }
+
+      .layui-input-inline.tags { width: 300px; }
+    }
+  }
+
+  .admin-table {
+    border-top: 2px solid #202124;
+    padding: 5px;
+    flex: 1;
+
+    .layui-table-tool {padding: 0;min-height: 40px}
+  }
+}

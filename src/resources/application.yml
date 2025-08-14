@@ -1,0 +1,35 @@
+app:
+  allowed:
+    hosts: localhost,127.0.0.1
+    ips: 127.0.0.1
+spring:
+  profiles:
+    active: dev  # 默认激活开发环境
+  thymeleaf: # Thymeleaf设置
+    prefix: classpath:/views/
+    suffix: .html
+#  datasource:
+#    url: jdbc:sqlite:${basedir}/database/dev.db3
+#  mvc:
+#    static-path-pattern: /static/** # 静态资源前缀
+#  web:
+#    resources:
+#      static-locations: classpath:/static/
+server:
+  port: 8899
+  servlet:
+    context-path: / # 整个项目的前缀
+--- # pro 生产配置
+spring:
+  config:
+    activate:
+      on-profile: pro  # 开发环境配置
+  thymeleaf:
+    cache: true
+--- # dev 开发配置
+spring:
+  config:
+    activate:
+      on-profile: dev  # 开发环境配置
+  thymeleaf:
+    cache: false

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pvt.example.mapper.TagMapper">
+  <!--实体映射-->
+  <resultMap id="base_result_map" type="pvt.example.pojo.entity.Tag">
+    <id column="id" property="id" />
+  </resultMap>
+  <!-- 通用查询结果列 @formatter:off -->
+  <sql id="base_columns">id,name</sql>
+  <!-- @formatter:on -->
+  <select id="selectTags" resultType="pvt.example.pojo.entity.Tag">
+    SELECT
+    <include refid="base_columns" />
+    FROM tags
+  </select>
+</mapper>

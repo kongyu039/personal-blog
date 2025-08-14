@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh_CN" xmlns:th="http://www.thymeleaf.org/">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Markdown编辑</title>
+  <link rel="stylesheet" th:href="@{/static/lib/vditor/dist/index.css}" />
+  <style>
+    input {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      outline: 0;
+      height: 35px;
+      line-height: 35px;
+      width: 48%;
+      margin-bottom: 5px;
+      text-indent: 0.5rem;
+    }
+
+    .vditor-toolbar {padding-left: 450px !important;}
+
+    .vditor-reset {padding: 10px 200px !important;}
+  </style>
+</head>
+<body style="padding: 5px">
+  <form>
+    <input type="text" placeholder="请输入文章标题*" name="title">
+    <input type="text" placeholder="请输入文章概括/摘要" name="summary">
+  </form>
+  <div id="editor"></div>
+  <script type="text/javascript" th:inline="javascript" id="ctxUrl" th:attr="data-ctx=${#servletContext.contextPath}">
+    const ctxUrl = document.getElementById("ctxUrl").dataset.ctx || '' /*项目根目录路径*/
+    window.addEventListener("keydown", (e) => {
+      if ((e.key.toLowerCase() === 's') && (e.ctrlKey || (navigator.platform.match("Mac") && e.metaKey))) {e.preventDefault()}
+    }, false)
+  </script>
+  <script th:src="@{/static/lib/vditor/dist/index.min.js}" type="text/javascript"></script>
+  <script type="text/javascript">
+    const adminVditor = new Vditor('editor', {
+      cdn: ctxUrl + '/static/lib/vditor',
+      mode: 'ir',
+      width: '100%',
+      height: 'calc(100vh - 120px)',
+      counter: {enable: true},
+      outline: {enable: true},
+      upload: {
+        url: ctxUrl + '/common/upload',
+        accept: 'image/*',
+        max: 2 * 1024 * 1024,  // 控制大小
+        multiple: false, // 是否允许批量上传
+        fieldName: 'image', // 上传字段名称
+        success(editor, responseText) {
+          const {code, data} = JSON.parse(responseText)
+          if (code === 200) {
+            let url = data
+            const currentMode = adminVditor.getCurrentMode()
+            if (currentMode === 'wysiwyg') {
+              adminVditor.insertValue(`<img src="${ url }" alt="图片" />`, true)
+            } else {
+              adminVditor.insertValue(`![图片](${ url })`, true)
+            }
+            adminVditor.tip('上传成功！', 1000)
+            adminVditor.focus()
+          } else {
+            adminVditor.tip('上传失败！', 1000)
+          }
+        }
+      },
+    })
+  </script>
+</body>
+</html>
