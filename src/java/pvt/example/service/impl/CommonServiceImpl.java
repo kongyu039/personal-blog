@@ -51,6 +51,5 @@ public class CommonServiceImpl implements CommonService {
         // https://icewolf-li.github.io/posts/Cloudflare%20R2.html
         // https://github.com/awsdocs/aws-doc-sdk-examples/tree/main/javav2
         return null;
-        datetime
     }
 }
