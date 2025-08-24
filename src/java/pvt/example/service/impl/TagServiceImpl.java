@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * 信息：src/java/pvt/example/service/TagServiceImpl.java
  * <p>日期：2025/8/13
- * <p>描述：
+ * <p>描述：标签Tag Service服务实现类
  */
 @Service
 public class TagServiceImpl implements TagService {
@@ -21,5 +21,10 @@ public class TagServiceImpl implements TagService {
     @Override
     public List<Tag> getTags() {
         return tagMapper.selectTags();
+    }
+
+    @Override
+    public List<Tag> getTagsByPostId(Long postId) {
+        return tagMapper.selectTagsByPostId(postId);
     }
 }

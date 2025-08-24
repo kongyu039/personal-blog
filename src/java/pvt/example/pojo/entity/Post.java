@@ -14,7 +14,7 @@ import java.util.List;
  * <p>描述：文章实体类 [文章N-标签N] [文章1-分类N]
  */
 public class Post {
-    private Integer id;             // 主键(用雪花算法生成)
+    private Long id;             // 主键(用雪花算法生成)
     private String cover;           // 封面URL
     private String title;           // 标题
     @Size(max = 30, message = "字符串长度不能超过30个字符")
@@ -32,9 +32,9 @@ public class Post {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<Tag> tags;         // 一对多关系
 
-    public Integer getId() { return id; }
+    public Long getId() { return id; }
 
-    public void setId(Integer id) { this.id = id; }
+    public void setId(Long id) { this.id = id; }
 
     public String getCover() { return cover; }
 

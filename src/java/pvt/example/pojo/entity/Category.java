@@ -12,6 +12,7 @@ import java.util.List;
 public class Category {
     private Integer id; // 标签id
     private String name; // 标签名称
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String summary; // 分类摘要
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<Post> posts; // 一对多关系

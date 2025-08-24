@@ -13,4 +13,6 @@ import java.util.List;
 @Mapper
 public interface CategoryMapper {
     public List<Category> selectCategories();
+
+    public Category selectCategoryByPostId(Long postId);
 }

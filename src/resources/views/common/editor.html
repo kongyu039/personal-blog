@@ -5,48 +5,91 @@
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Markdown编辑</title>
+  <link rel="stylesheet" th:href="@{/static/lib/normalize.css}">
   <link rel="stylesheet" th:href="@{/static/lib/vditor/dist/index.css}" />
   <style>
-    input {
+    form {position: relative;}
+
+    form input[type="text"] {
       -webkit-appearance: none;
       -moz-appearance: none;
       appearance: none;
       outline: 0;
       height: 35px;
       line-height: 35px;
-      width: 48%;
       margin-bottom: 5px;
       text-indent: 0.5rem;
     }
 
-    .vditor-toolbar {padding-left: 450px !important;}
+    form input[type="button"] {
+      position: fixed; z-index: 10;
+      outline: 0;height: 35px;line-height: 35px;
+      margin-bottom: 5px;vertical-align: middle;
+    }
 
-    .vditor-reset {padding: 10px 200px !important;}
+    div.vditor-toolbar {padding-left: 450px !important;}
+
+    pre.vditor-reset {padding: 10px 200px !important;}
+
+    #preview {
+      position: absolute; left: 0;top: 0;
+      width: 100%;height: 100%;z-index: 9;
+      background-color: white;
+      box-sizing: border-box;
+    }
+
+    #preview > .outline, .content {float: left;height: 100%;border: #1E9FFF 1px solid;box-sizing: border-box;overflow-y: auto;}
+
+    #preview > .outline {width: 270px;}
+
+    #preview > .content {width: calc(100% - 270px);}
   </style>
 </head>
-<body style="padding: 5px">
+<body style="padding: 3px">
   <form>
-    <input type="text" placeholder="请输入文章标题*" name="title">
-    <input type="text" placeholder="请输入文章概括/摘要" name="summary">
+    <input type="text" placeholder="请输入文章标题*" name="title" style="width: 34%;" />
+    <input type="text" placeholder="请输入文章概括/摘要" name="summary" style="width: 59%;" />
+    <input type="button" value="预览" style="width: 5%;cursor: pointer;" />
   </form>
+  <!-- 全屏编辑 -->
   <div id="editor"></div>
+  <!-- 全屏预览 -->
+  <div id="preview" style="display:none;">
+    <!-- 大纲 -->
+    <div class="outline">
+      <div class="outline-render" style="display: block;"></div>
+    </div>
+    <!-- 内容 -->
+    <div class="content">
+      <div class="content-render"></div>
+    </div>
+  </div>
   <script type="text/javascript" th:inline="javascript" id="ctxUrl" th:attr="data-ctx=${#servletContext.contextPath}">
-    const ctxUrl = document.getElementById("ctxUrl").dataset.ctx || '' /*项目根目录路径*/
+    const ctxUrl = (document.getElementById("ctxUrl").dataset.ctx || '') + '/' /*项目根目录路径*/
     window.addEventListener("keydown", (e) => {
       if ((e.key.toLowerCase() === 's') && (e.ctrlKey || (navigator.platform.match("Mac") && e.metaKey))) {e.preventDefault()}
     }, false)
   </script>
-  <script th:src="@{/static/lib/vditor/dist/index.min.js}" type="text/javascript"></script>
+  <script th:src="@{/static/lib/vditor/dist/index.js}" type="text/javascript"></script>
   <script type="text/javascript">
+    const editorObj = {
+      cover: null,
+      adminVditor: null,
+      /** @type {HTMLInputElement} */
+      titleEle: document.querySelector('form>input[type="text"][name="title"]'),
+      /** @type {HTMLInputElement} */
+      summaryEle: document.querySelector('form>input[type="text"][name="summary"]'),
+    }
     const adminVditor = new Vditor('editor', {
-      cdn: ctxUrl + '/static/lib/vditor',
-      mode: 'ir',
-      width: '100%',
-      height: 'calc(100vh - 120px)',
+      cdn: ctxUrl + 'static/lib/vditor',
+      mode: 'wysiwyg', width: '100%',
+      height: 'calc(100vh - 80px)',
       counter: {enable: true},
       outline: {enable: true},
+      cache: {enable: false},
+      preview: {hljs: {lineNumber: true, style: 'github-dark'}},
       upload: {
-        url: ctxUrl + '/common/upload',
+        url: ctxUrl + 'common/upload',
         accept: 'image/*',
         max: 2 * 1024 * 1024,  // 控制大小
         multiple: false, // 是否允许批量上传
@@ -61,14 +104,62 @@
             } else {
               adminVditor.insertValue(`![图片](${ url })`, true)
             }
-            adminVditor.tip('上传成功！', 1000)
+            adminVditor.tip('上传成功！', 888)
             adminVditor.focus()
           } else {
-            adminVditor.tip('上传失败！', 1000)
+            adminVditor.tip('上传失败！', 888)
           }
-        }
+        },
       },
     })
+    editorObj.titleEle.focus()
+    editorObj.adminVditor = adminVditor
+    window.editorObj = editorObj
+    window.onload = function () {
+      // 获取当前页面的URL
+      const url = window.location.href
+          , urlObj = new URL(url)
+          , params = new URLSearchParams(urlObj.search)
+          , postIdParam = params.get('postId')
+      if (postIdParam != null && postIdParam.trim().length > 0) {
+        fetch(ctxUrl + 'post/get-post?' + new URLSearchParams({postId: postIdParam}).toString())
+            .then(res => {
+              if (!res.ok) {throw new Error('网络响应不可行 ' + res.statusText)}
+              return res.json() // 处理为json
+            })
+            .then(({data}) => {
+              const {content, summary, title, cover} = data
+              editorObj.cover = cover
+              editorObj.titleEle.value = title
+              editorObj.summaryEle.value = summary
+              adminVditor.setValue(content)
+            })
+            .catch(error => {console.error('Fetch操作有问题:', error)})
+      }
+      const previewEle = document.getElementById('preview')
+          , contentRenderEle = previewEle.querySelector('.content .content-render')
+          , outlineRenderEle = previewEle.querySelector('.outline .outline-render')
+      document.querySelector('form>input[type="button"]').addEventListener('click', () => {
+        previewEle.style.display = previewEle.style.display === 'block' ? 'none' : 'block'// 切换：当前是 block 就改成 none，反之改成 block
+        if (previewEle.style.display === 'block') {
+          Vditor.preview(contentRenderEle, adminVditor.getValue(), {
+            cdn: ctxUrl + 'static/lib/vditor', anchor: 1,
+            after() {
+              Vditor.outlineRender(contentRenderEle, outlineRenderEle)
+              outlineRenderEle.querySelectorAll('span[data-target-id]').forEach(function (parEle) {
+                parEle.querySelector('span').addEventListener('click', function (event) {
+                  event.preventDefault() // 阻止默认行为
+                  const tarEle = document.getElementById(parEle.getAttribute('data-target-id'))
+                      , contEle = previewEle.querySelector('.content')
+                  // if (targetElement) {targetElement.querySelector('a').click()}
+                  if (tarEle && tarEle.offsetTop !== contEle.scrollTop) {contEle.scrollTo({top: tarEle.offsetTop, behavior: 'smooth'})}
+                })
+              })
+            },
+          })
+        }
+      })
+    }
   </script>
 </body>
 </html>

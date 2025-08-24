@@ -35,4 +35,7 @@ public class ViewController {
 
     @GetMapping("/common/editor.html")
     public String commonEditor() { return "common/editor"; }
+
+    @GetMapping("/common/preview.html")
+    public String commonPreview() { return "common/preview"; }
 }

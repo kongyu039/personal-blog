@@ -1,88 +1,87 @@
 package pvt.example.common.utils;
 
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+
 /**
  * 信息：src/java/pvt/example/common/utils/SnowFlakeUtil.java
- * <p>日期：2025/8/3
- * <p>描述：雪花算法 32 位
+ * <p>日期：2025/8/12
+ * <p>描述：小型雪花ID 14位
  */
-public class SnowFlakeUtil{
-    //起始时间戳
-    private static final long startTimeStamp;
-    //机器ID
-    private static final long workID;
-    //数据中心ID
-    private static final long  dataCenterID;
-    //序列号
-    private static long sequence;
-    //数据中心ID移动位数
-    private static final long dataCenterIndex;
-    //机器ID移动位数
-    private static final long workIDIndex;
-    //时间戳移动位数
-    private static final long timeStampIndex;
-    //记录上一次时间戳
-    private static long lastTimeStamp;
-    //序列号掩码
-    private static final long sequenceMask;
-    //序列号长度12位
-    private static final long sequenceLength;
+public class SnowFlakeUtil {
+    private SnowFlakeUtil() { }
 
-    //初始化数据
+    // 秒时间戳1748707200(10位)+机器id(1位)+序列号(2位)+1位校验
+    private static final long START_TIMESTAMP = 1748707200L; // 起始时间戳（2025-06-01 00:00:00）
+    // 机器ID (0-9)
+    private static final int MACHINE_ID = Integer.getInteger("snowflake.machine.id", 0);
+    // 序列号 (0-99)
+    private static final AtomicInteger sequence = new AtomicInteger(ThreadLocalRandom.current().nextInt(10000));
+    // 上次时间戳（使用AtomicLong保证原子性）
+    private static final AtomicLong lastTimestamp = new AtomicLong(-1);
+
     static {
-        startTimeStamp = 1577808000000L;
-        //设置机器编号 1
-        workID = 1L;
-        //设置数据中心ID 1
-        dataCenterID = 1L;
-        //起始序列号 0开始
-        sequence = 0L;
-        //数据中心位移位数
-        dataCenterIndex = 12L;
-        //机器ID位移位数
-        workIDIndex = 17L;
-        //时间戳位移位数
-        timeStampIndex = 22L;
-        //记录上次时间戳
-        lastTimeStamp = -1L;
-        //序列号长度
-        sequenceLength = 12L;
-        //序列号掩码
-        sequenceMask = ~(-1L << sequenceLength);
+        // 初始化时间戳
+        lastTimestamp.set(START_TIMESTAMP);
+        if (MACHINE_ID < 0 || MACHINE_ID > 9) {
+            throw new IllegalArgumentException("Machine ID must be between 0 and 9");
+        }
     }
-    public synchronized static Long getID(){
-        //获得当前时间
-        long now = System.currentTimeMillis();
-        //当前系统时间小于上一次记录时间
-        if (now < lastTimeStamp){
-            throw new RuntimeException("时钟回拨异常");
-        }
-        //相同时间 要序列号进制增量
-        if (now == lastTimeStamp){
-            //防止溢出
-            sequence = (sequence + 1) & sequenceMask;
-            if (sequence == 0L){
-                //溢出处理
-                try {
-                    Thread.sleep(1L);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+
+    /** @return 获取当前时间戳(s) */
+    private static long getCurrentTimestamp() { return System.currentTimeMillis() / 1000; }
+
+    /** 生成13位唯一ID（线程安全） */
+    public static long nextId() {
+        while (true) {
+            long currentTimestamp = SnowFlakeUtil.getCurrentTimestamp();
+            long oldTimestamp = lastTimestamp.get();
+            // 处理时钟回拨
+            if (currentTimestamp < oldTimestamp) { throw new RuntimeException("Clock moved backwards"); }
+            // 时间戳相同则递增序列号
+            if (currentTimestamp == oldTimestamp) {
+                int currentSeq = sequence.get();
+                int nextSeq = (currentSeq + 1) % 100;
+                if (sequence.compareAndSet(currentSeq, nextSeq)) {
+                    return assembleId(currentTimestamp, nextSeq);
                 }
-                //获取下一毫秒时间 （有锁）
-                now = System.currentTimeMillis();
+            } // 新时间戳则重置序列号
+            else if (lastTimestamp.compareAndSet(oldTimestamp, currentTimestamp)) {
+                int newSeq = ThreadLocalRandom.current().nextInt(100);
+                sequence.set(newSeq);
+                return assembleId(currentTimestamp, newSeq);
             }
-        }else{
-            //置0 之前序列号同一时间并发后自增 到这里说明时间不同了 版本号所以置0
-            sequence = 0L;
         }
-        //记录当前时间
-        lastTimeStamp = now;
-        //当前时间和起始时间插值 右移 22位
-        long handleTimeStamp = (now - startTimeStamp) << timeStampIndex;
-        // 数据中心数值 右移动 17位 并且 按位或
-        long handleWorkID = (dataCenterID << dataCenterIndex) | handleTimeStamp;
-        // 机器ID数值 右移动 12位 并且 按位或
-        long handleDataCenterID = (workID << workIDIndex) | handleWorkID;
-        // 序列号 按位或
-        return handleDataCenterID | sequence;
+    }
+
+    // 简单校验位计算（模10算法）
+    private static int calculateCheckDigit(String number) {
+        int sum = 0;
+        for (int i = 0; i < number.length(); i++) {
+            int digit = Character.getNumericValue(number.charAt(i));
+            sum += (i % 2 == 0) ? digit * 2 : digit;
+        }
+        return (10 - (sum % 10)) % 10;
+    }
+
+    /**
+     * 拼装13位+1位校验
+     * @param timestamp 时间戳(s)
+     * @param seq (序列号)
+     * @return 13位长+1位校验
+     */
+    private static long assembleId(long timestamp, int seq) {
+        // 10位时间戳（秒）
+        String timestampPart = String.format("%010d", timestamp);
+        // 1位机器ID
+        String machinePart = String.valueOf(MACHINE_ID);
+        // 2位序列号
+        String seqPart = String.format("%02d", seq);
+        // 组合14位
+        String id13 = timestampPart + machinePart + seqPart;
+        // 计算校验位（第14位）
+        int checkDigit = calculateCheckDigit(id13);
+        return Long.parseLong(id13 + checkDigit);
     }
 }

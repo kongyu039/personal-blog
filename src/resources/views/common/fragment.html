@@ -15,7 +15,7 @@
 <div th:fragment="common_script">
   <script th:src="@{/static/views/database.js}" type="text/javascript"></script>
   <script type="text/javascript" th:inline="javascript" id="ctxUrl" th:attr="data-ctx=${#servletContext.contextPath}">
-    const ctxUrl = document.getElementById("ctxUrl").dataset.ctx || '' /*项目根目录路径*/
+    const ctxUrl = (document.getElementById("ctxUrl").dataset.ctx || '') + '/' /*项目根目录路径*/
     // 禁用 Ctrl + S 或 Cmd + S 组合键
     window.addEventListener("keydown", (e) => {
       if ((e.key.toLowerCase() === 's') && (e.ctrlKey || (navigator.platform.match("Mac") && e.metaKey))) {

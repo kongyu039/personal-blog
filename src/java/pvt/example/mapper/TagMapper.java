@@ -13,4 +13,6 @@ import java.util.List;
 @Mapper
 public interface TagMapper {
     public List<Tag> selectTags();
+
+    public List<Tag> selectTagsByPostId(Long postId);
 }

@@ -39,6 +39,7 @@ public class BeanConfig {
         // 自定义配置
         org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
         configuration.setMapUnderscoreToCamelCase(true); // 开启驼峰命名映射
+        // configuration.getTypeHandlerRegistry().register(Date.class, new CustomDateTypeHandler());// 注册自定义 TypeHandler
         sessionFactory.setConfiguration(configuration);
         sessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver()
                                                   .getResources("classpath:mapper/*.xml")); // XML映射文件位置

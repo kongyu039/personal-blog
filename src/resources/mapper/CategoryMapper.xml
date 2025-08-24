@@ -4,14 +4,22 @@
 <mapper namespace="pvt.example.mapper.CategoryMapper">
   <!--实体映射-->
   <resultMap id="base_result_map" type="pvt.example.pojo.entity.Category">
-    <id column="id" property="id"/>
+    <id column="id" property="id" />
   </resultMap>
-  <!-- 通用查询结果列 @formatter:off -->
-  <sql id="base_columns">id,name,summary</sql>
-  <!-- @formatter:on -->
+  <!-- 获取所有Category分类 -->
   <select id="selectCategories" resultMap="base_result_map">
-    SELECT
-    <include refid="base_columns" />
+    SELECT id, name, summary
     FROM categories
+  </select>
+  <!-- 查询 Category 通过CategoryId -->
+  <select id="selectCategoryByCategoryId" parameterType="java.lang.Integer" resultType="pvt.example.pojo.entity.Category">
+    SELECT id, name FROM categories WHERE id = #{category_id}
+  </select>
+  <!-- 查询 Category 通过postId -->
+  <select id="selectCategoryByPostId" parameterType="Long" resultType="pvt.example.pojo.entity.Category">
+    SELECT id, name
+    FROM categories
+           JOIN categories_posts ON categories.id = categories_posts.category_id
+    WHERE categories_posts.post_id = #{postId}
   </select>
 </mapper>

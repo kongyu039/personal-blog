@@ -1,8 +1,7 @@
 package pvt.example.controller;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import pvt.example.pojo.dto.PostRequest;
 import pvt.example.pojo.entity.Post;
 import pvt.example.pojo.query.PostQuery;
 import pvt.example.pojo.vo.ResultPageVO;
@@ -10,6 +9,7 @@ import pvt.example.pojo.vo.ResultVO;
 import pvt.example.service.PostService;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
 /**
  * 信息：src/java/pvt/example/controller/PostController.java
@@ -28,18 +28,61 @@ public class PostController extends BaseController {
      */
     @PostMapping("/get-posts")
     private ResultVO<ResultPageVO<Post>> getPostList(PostQuery postQuery) {
-        System.out.println("postQuery = " + postQuery);
-        if (postQuery.getPage() <= 0) { postQuery.setPage(1); }
-        if (postQuery.getLimit() <= 0) { postQuery.setLimit(5); }
+        if (postQuery.getPage() == null || postQuery.getPage() <= 0) { postQuery.setPage(1); }
+        if (postQuery.getLimit() == null || postQuery.getLimit() <= 0) { postQuery.setLimit(5); }
         ResultPageVO<Post> resultPosts = postService.queryPost(postQuery);
         return successResultVO(resultPosts);
     }
 
     /**
-     * 上传文章
-     * @param post 文章
+     * 通过postId查询信息
+     * @param postId 文章id
      */
-    private ResultVO<String> putPost(Post post) {
-        return successResultVO(null);
+    @GetMapping("/get-post")
+    private ResultVO<Post> getPostById(@RequestParam Long postId) {
+        return successResultVO(postService.queryPostById(postId));
+    }
+
+    /**
+     * 新增上传文章
+     * @param postRequest 文章
+     */
+    @PostMapping("/add-post")
+    private ResultVO<String> addPost(@Valid PostRequest postRequest) {
+        postService.createPost(postRequest);
+        return successResultVO();
+    }
+
+    /**
+     * 删除文章(支持批量删除)
+     * @param ids 文章id数组
+     */
+    @PostMapping("/del-post")
+    private ResultVO<String> delPost(@RequestParam Long[] ids) {
+        postService.deletePost(ids);
+        return successResultVO();
+    }
+
+    /**
+     * 文章修改
+     * @param postRequest 文章
+     */
+    @PostMapping("/edit-post")
+    private ResultVO<String> editPost(@Valid PostRequest postRequest) {
+        postService.editPost(postRequest);
+        return successResultVO();
+    }
+
+    @PostMapping("/edit-post-top")
+    private ResultVO<String> editPostTop(@RequestParam Long postId, @RequestParam Integer isTop) {
+        postService.editPostTop(postId,isTop);
+        return successResultVO(isTop == 0 ? "否" : "是");
+    }
+
+    @PostMapping("/edit-post-del")
+    private ResultVO<String> editPostDel(@RequestParam Long postId, @RequestParam Integer isDel) {
+        System.out.println("postId = " + postId);
+        System.out.println("isDel = " + isDel);
+        return successResultVO(isDel == 0 ? "否" : "是");
     }
 }

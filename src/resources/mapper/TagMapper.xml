@@ -6,12 +6,16 @@
   <resultMap id="base_result_map" type="pvt.example.pojo.entity.Tag">
     <id column="id" property="id" />
   </resultMap>
-  <!-- 通用查询结果列 @formatter:off -->
-  <sql id="base_columns">id,name</sql>
-  <!-- @formatter:on -->
+  <!-- 获取所有Tags标签 -->
   <select id="selectTags" resultType="pvt.example.pojo.entity.Tag">
-    SELECT
-    <include refid="base_columns" />
+    SELECT id,name
     FROM tags
+  </select>
+  <!-- 查询Tag通过PostId -->
+  <select id="selectTagsByPostId" parameterType="java.lang.Long" resultType="pvt.example.pojo.entity.Tag">
+    SELECT id, name
+    FROM tags
+           JOIN tags_posts ON tags.id = tags_posts.tag_id
+    WHERE tags_posts.post_id = #{postId}
   </select>
 </mapper>

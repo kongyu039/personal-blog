@@ -36,9 +36,7 @@ public class BaseController {
     }
 
     /** 封装返回成功对象 数据为 null */
-    protected <T> ResultVO<T> successResultVO() {
-        return successResultVO(null);
-    }
+    protected <T> ResultVO<T> successResultVO() { return successResultVO(null); }
 
     /** 独立获取 ServletRequest */
     protected ServletRequestAttributes getServletRequest() {
@@ -46,7 +44,5 @@ public class BaseController {
     }
 
     /** 独立获取 HttpSession */
-    protected HttpSession getHttpSession() {
-        return this.getServletRequest().getRequest().getSession();
-    }
+    protected HttpSession getHttpSession() { return this.getServletRequest().getRequest().getSession(); }
 }

@@ -5,30 +5,17 @@
   <!--实体映射-->
   <resultMap id="base_result_map" type="pvt.example.pojo.entity.Post">
     <id property="id" column="id" />
-    <!-- 关联Category N对1 -->
-    <association property="category" column="category_id" select="selectCategoryById"
+    <!-- Post关联Category N对1 -->
+    <association property="category" column="category_id"
+                 select="pvt.example.mapper.CategoryMapper.selectCategoryByCategoryId"
                  javaType="pvt.example.pojo.entity.Category" />
-    <!-- 关联Tags N对N -->
-    <collection property="tags" column="id" ofType="pvt.example.pojo.entity.Tag" select="selectTagsByPostId" />
+    <!-- Post关联Tags N对N -->
+    <collection property="tags" column="id" ofType="pvt.example.pojo.entity.Tag"
+                select="pvt.example.mapper.TagMapper.selectTagsByPostId" />
   </resultMap>
-  <!-- SQL Column -->
-  <!-- @formatter:off -->
-  <!--<sql id="base_columns">id, cover, title, summary, content, html_content, created_at, updated_at, is_top, is_del</sql>-->
-  <!-- @formatter:on -->
-  <!-- 查询 Category N对1 -->
-  <select id="selectCategoryById" parameterType="Long" resultType="pvt.example.pojo.entity.Category">
-    SELECT id, name, summary FROM categories WHERE id = #{category_id}
-  </select>
-  <!-- 查询 Tags N对N -->
-  <select id="selectTagsByPostId" parameterType="Long" resultType="pvt.example.pojo.entity.Tag">
-    SELECT id, name
-    FROM tags
-           JOIN tags_posts ON tags.id = tags_posts.tag_id
-    WHERE tags_posts.post_id = #{postId}
-  </select>
-  <!-- 查询 List<Post> -->
-  <select id="selectPost" resultMap="base_result_map" parameterType="pvt.example.pojo.query.PostQuery">
-    SELECT id, cover, title, summary, content, html_content, created_at, updated_at, is_top, is_del,
+  <!-- 查询基础信息 List<Post> -->
+  <select id="selectPost" parameterType="pvt.example.pojo.query.PostQuery" resultMap="base_result_map">
+    SELECT id, cover, title, summary, created_at, updated_at, is_top, is_del,
     cp.category_id AS category_id
     FROM posts
     JOIN categories_posts cp ON id = cp.post_id
@@ -52,13 +39,14 @@
       </foreach>
       )
     </if>
+    ORDER BY id
     <bind name="offset" value="(page-1) * limit" />
     <if test="page != null and limit != null">
       LIMIT #{limit} OFFSET #{offset}
     </if>
   </select>
-  <!-- 统计数量 -->
-  <select id="selectPostCount" resultType="java.lang.Integer">
+  <!-- 统计"基础信息 List<Post>"数量 -->
+  <select id="selectPostCount" parameterType="pvt.example.pojo.query.PostQuery" resultType="java.lang.Integer">
     SELECT COUNT(*) FROM posts
     JOIN categories_posts cp ON id = cp.post_id
     WHERE is_del = 0
@@ -82,4 +70,63 @@
       )
     </if>
   </select>
+  <!-- 通过PostId查询post -->
+  <select id="selectPostByPostId" parameterType="java.lang.Long" resultType="pvt.example.pojo.entity.Post">
+    SELECT id, cover, title, summary, content
+    FROM posts
+    WHERE is_del = 0
+      AND id = #{id}
+  </select>
+  <!-- posts插入新增一条数据 -->
+  <insert id="insertPost" parameterType="pvt.example.pojo.dto.PostRequest" keyProperty="id">
+    INSERT INTO posts
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">id,</if>
+      <if test="title != null">title,</if>
+      <if test="summary != null">summary,</if>
+      <if test="cover != null">cover,</if>
+      <if test="content != null">content,</if>
+      <if test="htmlContent != null">html_content,</if>
+      <if test="createdAt != null">created_at,</if>
+      <if test="updatedAt != null">updated_at,</if>
+    </trim>
+    VALUES
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">#{id},</if>
+      <if test="title != null">#{title},</if>
+      <if test="summary != null">#{summary},</if>
+      <if test="cover != null">#{cover},</if>
+      <if test="content != null">#{content},</if>
+      <if test="htmlContent != null">#{htmlContent},</if>
+      <if test="createdAt != null">#{createdAt},</if>
+      <if test="updatedAt != null">#{updatedAt},</if>
+    </trim>
+  </insert>
+  <!-- 通过id删除post -->
+  <delete id="deletePost">
+    DELETE FROM posts
+    WHERE id IN
+    <foreach collection="array" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </delete>
+  <!-- 通过id修改post -->
+  <update id="updatePost" parameterType="pvt.example.pojo.dto.PostRequest">
+    UPDATE posts
+    SET cover = #{cover},
+        title = #{title},
+        summary = #{summary},
+        content = #{content},
+        html_content = #{htmlContent},
+        updated_at = #{updatedAt}
+    WHERE id = #{id}
+  </update>
+  <!-- 通过id修改post置顶 -->
+  <update id="updatePostTop">
+    UPDATE posts SET is_top = #{isTop} WHERE id = #{postId}
+  </update>
+  <!-- 通过id修改post删除状态 -->
+  <update id="updatePostDel">
+    UPDATE posts SET is_del = #{isDel} WHERE id = #{postId}
+  </update>
 </mapper>

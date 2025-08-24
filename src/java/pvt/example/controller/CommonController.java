@@ -4,12 +4,13 @@ import org.springframework.util.DigestUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import pvt.example.common.config.HostIpConfig;
 import pvt.example.common.utils.SnowFlakeUtil;
 import pvt.example.pojo.vo.ResultVO;
+import pvt.example.service.CommonService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.io.IOException;
@@ -26,35 +27,33 @@ import java.util.Set;
 @Validated
 public class CommonController extends BaseController {
     @Resource
-    private HostIpConfig hostIpConfig;
+    private CommonService commonService;
+
+
+    @GetMapping("/get-path")
+    public void getContextPath(@RequestParam(name = "callback", defaultValue = "contextPath", required = false) String callback,
+                               HttpServletRequest request, HttpServletResponse response) {
+        String contextPath = request.getContextPath();
+        String jsCode = String.format("function %s(url){return '%s/'+url;};", callback, contextPath);
+        response.setContentType("application/javascript;charset=UTF-8");
+        try {
+            response.getWriter().write(jsCode);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @GetMapping("/get-ip")
     private ResultVO<String> getIp(HttpServletRequest request) { return successResultVO(request.getRemoteAddr()); }
 
-    @GetMapping("/change-ip")
-    private ResultVO<Set<String>> changeIp(@RequestParam @NotBlank String ip
-            , @RequestParam @NotBlank @Pattern(regexp = "^(add|del)$", message = "flag为'add'或'del'") String flag) {
-        if ("add".equalsIgnoreCase(flag)) {
-            hostIpConfig.addIp(ip);
-        } else {
-            hostIpConfig.removeIp(ip);
-        }
-        return successResultVO(hostIpConfig.getAllowedIPs());
-    }
-
-    @GetMapping("/change-host")
-    private ResultVO<Set<String>> changeHost(@RequestParam @NotBlank String host
-            , @RequestParam @NotBlank @Pattern(regexp = "^(add|del)$", message = "flag为'add'或'del'") String flag) {
-        if ("add".equalsIgnoreCase(flag)) {
-            hostIpConfig.addHost(host);
-        } else {
-            hostIpConfig.removeHost(host);
-        }
-        return successResultVO(hostIpConfig.getAllowedIPs());
+    @GetMapping("/change-ip_host")
+    private ResultVO<Set<String>> changeIpHost(@RequestParam @NotBlank String type, @RequestParam @NotBlank String ipHost
+            , @RequestParam @NotBlank @Pattern(regexp = "^(add|del)$", message = "flag为'add/del'") String flag) {
+        return successResultVO(commonService.changeIpHost(type,ipHost,flag));
     }
 
     @GetMapping("/snow-id")
-    private ResultVO<Long> snowId() { return successResultVO(SnowFlakeUtil.getID()); }
+    private ResultVO<Long> snowId() { return successResultVO(SnowFlakeUtil.nextId()); }
 
     @PostMapping("/upload")
     private ResultVO<String> upload(@RequestParam("image") MultipartFile imageFile) {
@@ -78,5 +77,13 @@ public class CommonController extends BaseController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @PostMapping("/r2upload")
+    private ResultVO<String> r2upload(@RequestParam("image") MultipartFile imageFile) {
+        // 前置校验
+        if (imageFile.isEmpty()) { return successResultVO("error"); }
+        // 调用服务层
+        return successResultVO(commonService.uploadToR2(imageFile));
     }
 }

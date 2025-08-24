@@ -1,5 +1,5 @@
 app:
-  allowed:
+  allowed: # 允许无需验证可以直接访问的 主机 或 ip地址 满足一项即可
     hosts: localhost,127.0.0.1
     ips: 127.0.0.1
 spring:
@@ -8,6 +8,16 @@ spring:
   thymeleaf: # Thymeleaf设置
     prefix: classpath:/views/
     suffix: .html
+cloud:
+  aws:
+    s3:
+      endpoint: https://abc123.r2.cloudflarestorage.com  # 替换为实际accountID
+      bucket-name: my-spring-boot-bucket                # 替换为实际存储桶名
+      cdn-domain: img.example.com                        # 替换为自定义域名
+      region: auto                                       # 自动识别区域
+      credentials:
+        access-key: YOUR_ACCESS_KEY                      # 替换为API访问密钥
+        secret-key: YOUR_SECRET_KEY                      # 替换为API秘密密钥
 #  datasource:
 #    url: jdbc:sqlite:${basedir}/database/dev.db3
 #  mvc:

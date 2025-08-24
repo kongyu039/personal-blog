@@ -2,6 +2,7 @@ package pvt.example.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pvt.example.pojo.entity.Tag;
 import pvt.example.pojo.vo.ResultVO;
@@ -18,12 +19,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/tag")
 public class TagController extends BaseController {
+    @Resource
+    private TagService tagService;
 
-        @Resource
-        private TagService tagService;
+    @GetMapping("/all-list")
+    private ResultVO<List<Tag>> getAllTags() { return successResultVO(tagService.getTags()); }
 
-        @GetMapping("/list")
-        private ResultVO<List<Tag>> getAllTags() {
-            return successResultVO(tagService.getTags());
-        }
+    @GetMapping("/get-tags")
+    private ResultVO<List<Tag>> getTagsByPostId(@RequestParam Long postId) {
+        return successResultVO(tagService.getTagsByPostId(postId));
+    }
 }

@@ -21,7 +21,8 @@
       layer.msg(elem.text(), {time: 1000})
     }
   })
-  clickActiveNav(utils.getHashNumber())
+  clickActiveNav(dbJson.initPageId)
+  // clickActiveNav(utils.getHashNumber())
   changeTheme(['blue-theme', 'green-theme', 'white-theme'])
 })()
 /**

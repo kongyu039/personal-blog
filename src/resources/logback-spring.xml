@@ -2,7 +2,7 @@
 <configuration debug="false">
   <!-- 配置一个通用的格式 -->
   <property name="myPattern_1" value="[%-5p] [%5t] %c %d{yyyy-MM-dd HH:mm:ss,SSS} %m%n" />
-  <property name="myPattern_2" value="[%green(%d{HH:mm:ss})] [%highlight(%-5level)] [%thread] [%logger] %msg%n" />
+  <property name="myPattern_2" value="%green([%d{HH:mm:ss}]) %highlight([%-5level]) [%thread] [%logger] %msg%n" />
   <appender name="MyConsole" class="ch.qos.logback.core.ConsoleAppender">
     <target>System.out</target>
     <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
@@ -10,12 +10,12 @@
     </encoder>
   </appender>
   <!-- 定义文件附加器 -->
-  <appender name="MyFile" class="ch.qos.logback.core.FileAppender">
-    <file>logs/blog.log</file> <!-- 日志文件的路径 -->
+  <!--<appender name="MyFile" class="ch.qos.logback.core.FileAppender">
+    <file>logs/blog.log</file> &lt;!&ndash; 日志文件的路径 &ndash;&gt;
     <encoder>
-      <pattern>${myPattern_1}</pattern> <!-- 日志格式 -->
+      <pattern>${myPattern_1}</pattern> &lt;!&ndash; 日志格式 &ndash;&gt;
     </encoder>
-  </appender>
+  </appender>-->
 
   <!-- 额外的 logger ; name是 包名|全类名 level 是等级 additivity(是否继承,默认继承true) -->
   <!-- 配置项目日志记录器 -->

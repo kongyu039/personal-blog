@@ -11,4 +11,6 @@ import java.util.List;
  */
 public interface TagService {
   public  List<Tag> getTags();
+
+  public  List<Tag> getTagsByPostId(Long postId);
 }
