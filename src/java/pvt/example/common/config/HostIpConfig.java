@@ -41,19 +41,11 @@ public class HostIpConfig {
      */
     public void removeHost(String host) { allowedHosts.remove(host); }
 
-    public Set<String> getAllowedHosts() {
-        return allowedHosts;
-    }
+    public Set<String> getAllowedHosts() { return allowedHosts; }
 
-    public void setAllowedHosts(Set<String> allowedHosts) {
-        this.allowedHosts = allowedHosts;
-    }
+    public void setAllowedHosts(Set<String> allowedHosts) { this.allowedHosts = allowedHosts; }
 
-    public Set<String> getAllowedIPs() {
-        return allowedIPs;
-    }
+    public Set<String> getAllowedIPs() { return allowedIPs; }
 
-    public void setAllowedIPs(Set<String> allowedIPs) {
-        this.allowedIPs = allowedIPs;
-    }
+    public void setAllowedIPs(Set<String> allowedIPs) { this.allowedIPs = allowedIPs; }
 }

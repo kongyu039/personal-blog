@@ -13,4 +13,10 @@ public interface TagService {
   public  List<Tag> getTags();
 
   public  List<Tag> getTagsByPostId(Long postId);
+
+  public Integer delTagById(Integer[] ids);
+
+  public Integer addTag(Tag tag);
+
+  public Integer editTag(Tag tag);
 }

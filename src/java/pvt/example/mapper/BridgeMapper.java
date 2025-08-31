@@ -14,7 +14,13 @@ public interface BridgeMapper {
 
     public Integer insertTagPost(PostRequest postCreate);
 
-    public Integer delCategoryPostById(Long[] ids);
+    public Integer delCategoryPostByPostId(Long[] ids);
 
-    public Integer delTagPostById(Long[] ids);
+    public Integer delCategoryPostByCategoryId(Integer[] ids);
+
+    public Integer delTagPostByPostId(Long[] ids);
+
+    public Integer delTagPostByTagId(Integer[] ids);
+
+    public Integer uploadCategoryPostByCategoryIdToZero(Integer[] ids);
 }

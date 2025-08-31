@@ -25,13 +25,13 @@ public class BaseController {
     @Resource
     protected HttpSession session;
 
-    /** 封装返回成功对象 数据为 t */
-    protected <T> ResultVO<T> successResultVO(T t) {
+    /** 封装返回成功对象 数据为 data */
+    protected <T> ResultVO<T> successResultVO(T data) {
         ResultVO<T> resultVO = new ResultVO<>();
         resultVO.setStatus(STATUS_SUCCESS);
         resultVO.setCode(ResponseCodeEnum.CODE_200.getCode());
         resultVO.setMsg(ResponseCodeEnum.CODE_200.getMsg());
-        resultVO.setData(t);
+        resultVO.setData(data);
         return resultVO;
     }
 

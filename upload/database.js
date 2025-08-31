@@ -1,13 +1,13 @@
-// src/resources/static/views/database.js
+// upload/database.js
 const dbJson = {
-  initPageId: 11,
+  initPageId: 0,
   menuData: [
     {id: 0, name: "首页", icon: "fa-home", path: "content/home.html", isExtLink: false},
     {
       id: 1, name: "博客管理", icon: "fa-map-signs", isExtLink: false,
       children: [
         {id: 11, name: "文章管理", icon: "fa-book", path: "content/posts.html", isExtLink: false},
-        {id: 12, name: "分标管理", icon: "fa-tags", path: "content/tags.html", isExtLink: false},
+        {id: 12, name: "分标管理", icon: "fa-tags", path: "content/categories_tags.html", isExtLink: false},
       ],
     },
     {

@@ -12,6 +12,7 @@ import pvt.example.pojo.vo.ResultPageVO;
 import pvt.example.service.PostService;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -34,6 +35,12 @@ public class PostServiceImpl implements PostService {
     @Override
     public ResultPageVO<Post> queryPost(PostQuery postQuery) {
         ResultPageVO<Post> resultPageVO = new ResultPageVO<>();
+        if (postQuery.getTitle() != null) {
+            postQuery.setTitleQuery(String.join("%", Arrays.asList(postQuery.getTitle().split(""))));
+        }
+        if (postQuery.getSummary() != null) {
+            postQuery.setSummaryQuery(String.join("%", Arrays.asList(postQuery.getSummary().split(""))));
+        }
         List<Post> posts = postMapper.selectPost(postQuery);
         Integer totalCount = postMapper.selectPostCount(postQuery);
         resultPageVO.setResults(posts);
@@ -79,8 +86,8 @@ public class PostServiceImpl implements PostService {
     public void deletePost(Long[] ids) {
         if (ids.length > 0) {
             postMapper.deletePost(ids);
-            bridgeMapper.delCategoryPostById(ids);
-            bridgeMapper.delTagPostById(ids);
+            bridgeMapper.delCategoryPostByPostId(ids);
+            bridgeMapper.delTagPostByPostId(ids);
         }
     }
 
@@ -96,9 +103,9 @@ public class PostServiceImpl implements PostService {
         // 更新旧内容
         postMapper.updatePost(postRequest);
         // 先删除旧的,再添加新的
-        bridgeMapper.delCategoryPostById(postIds);
+        bridgeMapper.delCategoryPostByPostId(postIds);
         bridgeMapper.insertCategoryPost(postRequest);
-        bridgeMapper.delTagPostById(postIds);
+        bridgeMapper.delTagPostByPostId(postIds);
         if (postRequest.getTagIds().length > 0) {
             bridgeMapper.insertTagPost(postRequest);
         }
@@ -115,7 +122,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void editPostDel(Long postId, Integer isDel) {
-        postMapper.updatePostDel(postId, isDel);
+    public Integer editPostDel(Long[] ids, Boolean flag) {
+        if (ids != null && ids.length > 0) { return postMapper.updatePostDel(ids, flag ? 1 : 0); }
+        return 0;
     }
+
+    @Override
+    public List<Post> recyclePosts() { return postMapper.selectRecyclePosts(); }
 }

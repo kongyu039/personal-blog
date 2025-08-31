@@ -10,6 +10,7 @@ import pvt.example.service.PostService;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * 信息：src/java/pvt/example/controller/PostController.java
@@ -39,9 +40,11 @@ public class PostController extends BaseController {
      * @param postId 文章id
      */
     @GetMapping("/get-post")
-    private ResultVO<Post> getPostById(@RequestParam Long postId) {
-        return successResultVO(postService.queryPostById(postId));
-    }
+    private ResultVO<Post> getPostById(@RequestParam Long postId) { return successResultVO(postService.queryPostById(postId)); }
+
+    /** 获取回收站文章 */
+    @GetMapping("/recycle-posts")
+    private ResultVO<List<Post>> recyclePosts() {return successResultVO(postService.recyclePosts());}
 
     /**
      * 新增上传文章
@@ -54,13 +57,22 @@ public class PostController extends BaseController {
     }
 
     /**
-     * 删除文章(支持批量删除)
+     * 彻底删除文章(支持批量删除)
      * @param ids 文章id数组
      */
     @PostMapping("/del-post")
     private ResultVO<String> delPost(@RequestParam Long[] ids) {
         postService.deletePost(ids);
         return successResultVO();
+    }
+
+    /**
+     * 修改文章标记(删除/恢复)
+     * @param ids 文章id数组
+     */
+    @PostMapping("/edit-post-del")
+    private ResultVO<Integer> editPostDel(@RequestParam Long[] ids, @RequestParam Boolean flag) {
+        return successResultVO(postService.editPostDel(ids, flag));
     }
 
     /**
@@ -75,14 +87,7 @@ public class PostController extends BaseController {
 
     @PostMapping("/edit-post-top")
     private ResultVO<String> editPostTop(@RequestParam Long postId, @RequestParam Integer isTop) {
-        postService.editPostTop(postId,isTop);
+        postService.editPostTop(postId, isTop);
         return successResultVO(isTop == 0 ? "否" : "是");
-    }
-
-    @PostMapping("/edit-post-del")
-    private ResultVO<String> editPostDel(@RequestParam Long postId, @RequestParam Integer isDel) {
-        System.out.println("postId = " + postId);
-        System.out.println("isDel = " + isDel);
-        return successResultVO(isDel == 0 ? "否" : "是");
     }
 }

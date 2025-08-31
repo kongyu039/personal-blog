@@ -1,11 +1,17 @@
 package pvt.example.common.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.system.ApplicationHome;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -15,6 +21,8 @@ import java.time.format.DateTimeFormatter;
  * <p>描述：应用常用工具类
  */
 public class AppUtil {
+    private static final Logger logger = LoggerFactory.getLogger(AppUtil.class);
+
     /** 私有化工具构造函数，防止实例化 */
     private AppUtil() { }
 
@@ -96,4 +104,53 @@ public class AppUtil {
             return false;
         }
     }
+
+    /**
+     * 计算文件的MD5校验值
+     * @param file 文件
+     * @param isCapital 是否大写
+     * @return MD5值
+     */
+    public static String calculateCheckMD5(InputStream fis, boolean isCapital) {
+        try (fis) {
+            // 获取请求的摘要算法实例
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+            byte[] byteArray = new byte[1024];
+            int bytesCount;
+            // 读取文件内容并更新摘要
+            while ((bytesCount = fis.read(byteArray)) != -1) { digest.update(byteArray, 0, bytesCount); }
+            // 获取最终的摘要字节数组
+            byte[] bytes = digest.digest();
+            StringBuilder sb = new StringBuilder();
+            // 将字节数组转换为十六进制字符串
+            for (byte b : bytes) { sb.append(String.format("%02x", b)); }
+            return isCapital ? sb.toString().toUpperCase() : sb.toString();
+        } catch (IOException | NoSuchAlgorithmException e) {
+            logger.error("MD5计算错误", e);
+            return null;
+        }
+    }
+
+    /**
+     * 计算文件的MD5校验值(默认小写)
+     * @param file 文件
+     * @return MD5值
+     */
+    public static String calculateCheckMD5(InputStream fis) { return calculateCheckMD5(fis, false); }
+
+    /**
+     * 当前日期格式化字符串
+     * @param pattern 模式
+     * @return 日期格式
+     */
+    public static String toDayFormatter(String pattern) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+        return LocalDate.now().format(formatter);
+    }
+
+    /**
+     * 当前日期格式化字符串(yyyy/MM/dd)
+     * @return 日期格式
+     */
+    public static String toDayFormatter() { return toDayFormatter("yyyy/MM/dd"); }
 }

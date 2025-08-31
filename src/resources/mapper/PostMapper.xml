@@ -20,11 +20,11 @@
     FROM posts
     JOIN categories_posts cp ON id = cp.post_id
     WHERE is_del = 0
-    <if test="title != null and title.length() > 0">
-      AND title LIKE '%' || #{title} || '%'
+    <if test="titleQuery != null and titleQuery.length() > 0">
+      AND title LIKE '%' || #{titleQuery} || '%'
     </if>
-    <if test="summary != null and summary.length() > 0">
-      AND summary LIKE '%' || #{summary} || '%'
+    <if test="summaryQuery != null and summaryQuery.length() > 0">
+      AND summary LIKE '%' || #{summaryQuery} || '%'
     </if>
     <if test="categoryId != null">
       AND cp.category_id = #{categoryId}
@@ -39,7 +39,7 @@
       </foreach>
       )
     </if>
-    ORDER BY id
+    ORDER BY is_top DESC,id
     <bind name="offset" value="(page-1) * limit" />
     <if test="page != null and limit != null">
       LIMIT #{limit} OFFSET #{offset}
@@ -50,11 +50,11 @@
     SELECT COUNT(*) FROM posts
     JOIN categories_posts cp ON id = cp.post_id
     WHERE is_del = 0
-    <if test="title != null">
-      AND title LIKE '%' || #{title} || '%'
+    <if test="titleQuery != null and titleQuery.length() > 0">
+      AND title LIKE '%' || #{titleQuery} || '%'
     </if>
-    <if test="summary != null">
-      AND summary LIKE '%' || #{summary} || '%'
+    <if test="summaryQuery != null and summaryQuery.length() > 0">
+      AND summary LIKE '%' || #{summaryQuery} || '%'
     </if>
     <if test="categoryId != null">
       AND cp.category_id = #{categoryId}
@@ -76,6 +76,13 @@
     FROM posts
     WHERE is_del = 0
       AND id = #{id}
+  </select>
+  <select id="selectRecyclePosts" resultMap="base_result_map">
+    SELECT id, cover, title, summary, created_at, updated_at, is_top, is_del,
+           cp.category_id AS category_id
+    FROM posts
+           JOIN categories_posts cp ON id = cp.post_id
+    WHERE is_del = 1
   </select>
   <!-- posts插入新增一条数据 -->
   <insert id="insertPost" parameterType="pvt.example.pojo.dto.PostRequest" keyProperty="id">
@@ -127,6 +134,9 @@
   </update>
   <!-- 通过id修改post删除状态 -->
   <update id="updatePostDel">
-    UPDATE posts SET is_del = #{isDel} WHERE id = #{postId}
+    UPDATE posts
+    SET is_del = #{isDel}
+    WHERE id IN
+    <foreach collection="ids" item="id" open="(" separator="," close=")">#{id}</foreach>
   </update>
 </mapper>

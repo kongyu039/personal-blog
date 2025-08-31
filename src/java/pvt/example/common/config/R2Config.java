@@ -14,11 +14,17 @@ import javax.annotation.PostConstruct;
 @Component
 @ConfigurationProperties(prefix = "cloud.aws.s3")
 public class R2Config {
+    /** R2操作端点 */
     public static String END_POINT;
+    /** R2区域 */
     public static String REGION;
+    /** R2桶名称 */
     public static String BUCKET_NAME;
+    /** R2自定义域名 */
     public static String CDN_DOMAIN;
+    /** API访问密钥 */
     public static String ACCESS_KEY;
+    /** API机密访问密钥 */
     public static String SECRET_KEY;
     @Value("${cloud.aws.s3.endpoint}")
     private String endpoint;

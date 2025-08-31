@@ -1,12 +1,18 @@
-<!DOCTYPE html>
-<html lang="zh_CN" xmlns:th="http://www.thymeleaf.org/">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>recycling.html</title>
-</head>
-<body>
-  src/resources/views/content/recycling.html
-</body>
-</html>
+<link rel="stylesheet" th:href="@{/static/views/content/recycle.css}">
+<div id="admin-root" xmlns:th="http://www.thymeleaf.org/">
+  <!-- 分类管理 -->
+  <table class="layui-hide" id="recycle-table" lay-filter="recycle-table"></table>
+  <!-- 工具模版 -->
+  <script type="text/html" id="recycle-toolbar">
+    <button class="layui-btn layui-btn-sm" lay-event="restore">恢复</button>
+    <button class="layui-btn layui-btn-sm layui-bg-orange" lay-event="delete">删除</button>
+  </script>
+  <!-- 行工具模版 -->
+  <script type="text/html" id="recycle-tool">
+    <div class="layui-clear-space">
+      <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="rowRestore">恢复</a>
+      <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="rowDelete">删除</a>
+    </div>
+  </script>
+  <script th:src="@{/static/views/content/recycle.js}"></script>
+</div>

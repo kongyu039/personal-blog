@@ -18,12 +18,11 @@ public class WebConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // 获取当前工作目录
         // 定义静态资源路径，假设你的静态资源在 user.dir 目录下的 "static" 文件夹中
-        String path = "file:" + new File(AppUtil.getJarDirectory(), "upload").getAbsolutePath() + File.separator;
+        String uploadPath = "file:" + new File(AppUtil.getJarDirectory(), "upload").getAbsolutePath() + File.separator;
         // 添加资源处理器，映射到 /static/**
         registry.addResourceHandler("/static/**")
                 .addResourceLocations("classpath:/static/") // 资源类路径 /static/ 下的所有
-                .addResourceLocations(path); // 绝对文件夹路径 可能是开发的user.dir 或者 jar包同目录下的
-        // 配置根路径/favicon.ico的资源处理器 会直接映射到classpath:/static/目录下查找favicon.ico文件
+                .addResourceLocations(uploadPath); // 绝对文件夹路径 可能是开发的user.dir 或者 jar包同目录下的
         registry.addResourceHandler("/favicon.ico").addResourceLocations("classpath:/static/");
     }
 }

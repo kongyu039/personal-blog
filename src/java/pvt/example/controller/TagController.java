@@ -1,9 +1,6 @@
 package pvt.example.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pvt.example.pojo.entity.Tag;
 import pvt.example.pojo.vo.ResultVO;
 import pvt.example.service.TagService;
@@ -29,4 +26,13 @@ public class TagController extends BaseController {
     private ResultVO<List<Tag>> getTagsByPostId(@RequestParam Long postId) {
         return successResultVO(tagService.getTagsByPostId(postId));
     }
+
+    @PostMapping("/add-tag")
+    private ResultVO<Integer> addTag(Tag tag) { return successResultVO(tagService.addTag(tag)); }
+
+    @PostMapping("/del-tag")
+    private ResultVO<Integer> deleteTag(@RequestParam Integer[] ids) { return successResultVO(tagService.delTagById(ids)); }
+
+    @PostMapping("/edit-tag")
+    private ResultVO<Integer> editTag(Tag tag) { return successResultVO(tagService.editTag(tag)); }
 }

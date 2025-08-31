@@ -15,4 +15,10 @@ public interface TagMapper {
     public List<Tag> selectTags();
 
     public List<Tag> selectTagsByPostId(Long postId);
+
+    public Integer deleteTagById(Integer[] ids);
+
+    public Integer insertTag(Tag tag);
+
+    public Integer updateTag(Tag tag);
 }

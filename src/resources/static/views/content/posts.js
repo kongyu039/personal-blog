@@ -49,6 +49,7 @@
     })
     /** addPost新增文章 */
     function addPost() {
+      // noinspection JSCheckFunctionSignatures
       layer.open({
         type: 2, title: '编辑文章', move: false, maxmin: false, area: ['100%', '100%'], content: ctxUrl + 'common/editor.html',
         btn: ['保存', '取消'], yes(index, layero) {submitIframe(index, layero)},
@@ -61,16 +62,18 @@
       const postIdList = data.map(item => item['id'])
       if (postIdList.length <= 0) return
       // 批量删除 通过idS
-      layer.confirm(`是否删除文章${ postIdList }？`, {title: "批量删除文章"}, (index, layero) => {
+      layer.confirm(`是否删除文章${ postIdList }？`, {title: "批量删除文章(回收站)"}, (index, _) => {
         $.ajax({
-          url: ctxUrl + 'post/del-post', type: 'post', traditional: true, dataType: 'json', data: {ids: postIdList}, success(res) {
+          url: ctxUrl + 'post/edit-post-del', type: 'post', traditional: true, dataType: 'json', data: {ids: postIdList, flag: true},
+          success(res) {
             if (res.code === 200) {
               layer.msg(res.msg, {time: 1000})
+              // noinspection JSDeprecatedSymbols
               $('button[lay-filter="admin-submit"]').click()
               layer.close(index)//需要手动关闭
             }
           }, error(res) {
-            layer.msg(res.msg, {time: 1000})
+            layer.msg(res['msg'], {time: 1000})
             layer.close(index)//需要手动关闭
           },
         })
@@ -81,6 +84,7 @@
     /** rowEdit行修改事件 */
     function rowEdit(obj) {
       const {data: {id: postId}} = obj
+      // noinspection JSCheckFunctionSignatures
       layer.open({
         type: 2, title: '编辑文章', move: false, maxmin: false, area: ['100%', '100%'],
         content: ctxUrl + 'common/editor.html?postId=' + postId, btn: ['保存', '取消'],
@@ -90,11 +94,12 @@
     /** rowDel行删除事件 */
     function rowDel(obj) {
       const {id: postId, title} = obj['data']
-      layer.confirm(`是否删除文章《${ title }》？`, {title: "删除文章"}, (index, layero) => {
+      layer.confirm(`是否删除文章《${ title }》？`, {title: "删除文章(回收站)"}, (index, _) => {
         $.ajax({
-          url: ctxUrl + 'post/del-post', type: 'post', dataType: 'json', data: {ids: postId}, success(res) {
+          url: ctxUrl + 'post/edit-post-del', type: 'post', dataType: 'json', data: {ids: postId, flag: true}, success(res) {
             if (res.code === 200) {
               layer.msg(res.msg, {time: 1000})
+              // noinspection JSDeprecatedSymbols
               $('button[lay-filter="admin-submit"]').click()
               layer.close(index)//需要手动关闭
             }
@@ -115,45 +120,54 @@
         return
       }
       const titleStr = titleEle.value?.trim().replace(/\s+/g, ''), summaryStr = summaryEle.value?.trim().replace(/\s+/g, '')
+      // noinspection JSCheckFunctionSignatures
       const layerPostIndex = layer.open({
         type: 1, resize: false, move: false, title: '提交文章', area: ['630px', 'auto'],
-        content: document.querySelector('#post-form').innerHTML, btn: ["提交", "取消"], success(layero, index, that) {
+        content: document.querySelector('#post-form').innerHTML, btn: ["提交", "取消"], success(layero) {
           layero.find('.layui-layer-content').css("overflow", "visible")
           form.render(null, 'post-form')
           // 分类和标签渲染
           const {tempXmSelect} = formSelectRender($, form, xmSelect, 'post-form')
-          // 初始化赋值 分类Category
-          $.ajax({
-            url: ctxUrl + 'category/get-category?postId=' + postId, success(res) {
-              layero[0].querySelector('select[name="categoryId"]').value = res.data.id
-              // layero.find('select[name="categoryId]').val(res.data.id)
-              form.render(null, 'post-form')
-            },
-          })
-
-          // 初始化赋值 标签Tags
-          $.ajax({
-            url: ctxUrl + 'tag/get-tags?postId=' + postId, success(res) {
-              tempXmSelect.setValue(res.data.map(item => item.id))
-            },
-          })
-
+          if (postId != null) {
+            // 初始化赋值 分类Category
+            $.ajax({
+              url: ctxUrl + 'category/get-category?postId=' + postId, success(res) {
+                layero[0].querySelector('select[name="categoryId"]').value = res.data.id
+                // layero.find('select[name="categoryId]').val(res.data.id)
+                form.render(null, 'post-form')
+              },
+            })
+            // 初始化赋值 标签Tags
+            $.ajax({
+              url: ctxUrl + 'tag/get-tags?postId=' + postId, success(res) {
+                tempXmSelect.setValue(res.data.map(item => item.id))
+              },
+            })
+          }
           // 封面上传
+          // noinspection JSCheckFunctionSignatures
           const coverUpload = upload.render({
-            elem: '#cover-upload-preview', field: 'image', url: ctxUrl + 'common/upload', size: 2 * 1024 * 1024, auto: false,
-            accept: 'images', acceptMime: 'image/*', bindAction: '#cover-upload-btn', choose(obj) {
+            elem: '#cover-upload-preview', field: 'image', url: ctxUrl + 'basic/r2upload', size: 2 * 1024 * 1024, auto: false,
+            accept: 'images', acceptMime: 'image/*', bindAction: '#cover-upload-btn',
+            choose(obj) {
+              console.log("choose", obj)
               obj.preview(function (index, file, result) {
-                const $dragChoose = $('.layui-upload-drag>.choose')
-                const $dragUpload = $('.layui-upload-drag>.upload')
+                const $dragChoose = layero.find('.layui-upload-drag>.choose')
+                const $dragUpload = layero.find('.layui-upload-drag>.upload')
                 $dragChoose.find('.init').addClass('layui-hide')
                 $dragChoose.find('img').removeClass('layui-hide')
                 $dragChoose.find('img').attr('src', result) // 图片链接（base64）
                 $dragUpload.removeClass('layui-hide')
               })
               element.progress('cover-upload-progress', '0%') // 进度条复位
-            }, progress(n, elem, res, index) {
+            },
+            before(obj) {
+              // coverUpload.upload()
+              console.log("before", obj)
+            },
+            progress(n) {
               element.progress('cover-upload-progress', n + '%') // 可配合 layui 进度条元素使用
-            }, done(res, index, upload) {
+            }, done(res) {
               if (res.code === 200) {
                 layer.msg(res.msg, {time: 1000})
                 /** @type {HTMLInputElement} */
@@ -161,6 +175,24 @@
                 coverInput.value = res.data
               }
             },
+          })
+          const uploadDragEle = layero.find('.layui-upload-drag').get(0)
+          uploadDragEle.addEventListener('paste', ev => {
+            ev.preventDefault()
+            if (ev.clipboardData && ev.clipboardData.items && ev.clipboardData.items.length === 1) {
+              const item = ev.clipboardData.items[0]
+              if (item.kind === 'file' && item.type.startsWith('image/')) {
+                let file = item.getAsFile(),
+                  reader = new FileReader()
+                reader.onload = function (e) {
+                  /** @type {string} */
+                  const base64 = e.target.result
+                  layero.find('.layui-upload-drag>.choose img').attr('src', base64)
+                }
+                reader.readAsDataURL(file) // 读取文件
+                coverUpload.upload([file])
+              }
+            }
           })
           if (cover != null && cover.length > 0) {
             const $dragChoose = $('.layui-upload-drag>.choose')
@@ -170,7 +202,7 @@
             $dragChoose.find('img').attr('src', cover) // 图片链接（base64）
             $dragUpload.removeClass('layui-hide')
           }
-        }, yes(index, layero, that) {
+        }, yes() {
           // 表单提交事件
           form.submit('post-form', function (data) {
             let url = ctxUrl + 'post/add-post'
@@ -188,6 +220,7 @@
                 if (res.code === 200) {
                   layer.close(layerPostIndex)
                   layer.close(postIndex)
+                  // noinspection JSDeprecatedSymbols
                   $('button[lay-filter="admin-submit"]').click()
                 }
               }, error(res) {
@@ -235,7 +268,7 @@
     const colsData = [{checkbox: true, fixed: 'left', unresize: true}, {field: 'id', title: 'ID', width: 140, unresize: true},
       {field: 'cover', title: '封面', width: 80, hide: true, unresize: true}, {field: 'title', title: '标题', width: 230, unresize: true},
       {field: 'summary', title: '摘要', unresize: true}, {field: 'category', title: '分类', width: 110, unresize: true},
-      {field: 'tags', title: '标签', width: 130, unresize: true}, {
+      {field: 'tags', title: '标签', unresize: true}, {
         field: 'isTop', title: '置顶', width: 80, templet(d) {
           return `<input type="checkbox" name="isTop" lay-skin="switch" lay-filter="switchTop" lay-text="是|否" data-title="${ d.title }" data-id="${ d.id }" ${ d.isTop === 1 ? ' checked' : '' } />`
         }, align: "center", unresize: true,

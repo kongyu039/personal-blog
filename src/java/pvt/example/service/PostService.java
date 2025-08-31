@@ -5,6 +5,8 @@ import pvt.example.pojo.entity.Post;
 import pvt.example.pojo.query.PostQuery;
 import pvt.example.pojo.vo.ResultPageVO;
 
+import java.util.List;
+
 /**
  * 信息：src/java/pvt/example/service/PostService.java
  * <p>日期：2025/8/9
@@ -23,5 +25,7 @@ public interface PostService {
 
     public void editPostTop(Long postId, Integer isTop);
 
-    public void editPostDel(Long postId, Integer isDel);
+    public Integer editPostDel(Long[] ids, Boolean flag);
+
+    public List<Post> recyclePosts();
 }

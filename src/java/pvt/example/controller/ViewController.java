@@ -22,8 +22,8 @@ public class ViewController {
     public String contentPosts() { return "content/posts"; }
 
     /** 标签和分类 */
-    @GetMapping("/content/tags.html")
-    public String contentTags() { return "content/tags"; }
+    @GetMapping("/content/categories_tags.html")
+    public String contentTags() { return "content/categories_tags"; }
 
     /** 基础设置 */
     @GetMapping("/content/setting.html")
@@ -35,7 +35,4 @@ public class ViewController {
 
     @GetMapping("/common/editor.html")
     public String commonEditor() { return "common/editor"; }
-
-    @GetMapping("/common/preview.html")
-    public String commonPreview() { return "common/preview"; }
 }

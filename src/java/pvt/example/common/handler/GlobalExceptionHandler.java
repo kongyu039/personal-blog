@@ -1,5 +1,7 @@
 package pvt.example.common.handler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -12,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * 信息：src/java/pvt/example/common/handler/GlobalExceptionHandler.java
@@ -21,7 +22,7 @@ import java.util.logging.Logger;
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    private static final Logger logger = Logger.getLogger(GlobalExceptionHandler.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
      * 处理@RequestParam/@PathVariable的验证失败（ConstraintViolationException）
@@ -40,7 +41,7 @@ public class GlobalExceptionHandler {
             String errorMsg = violation.getMessage();
             errors.put(paramName, errorMsg);
         });
-        logger.fine("ConstraintViolationException.class @RequestParam/@PathVariable异常");
+        logger.debug("ConstraintViolationException.class @RequestParam/@PathVariable异常");
         return new ResultVO<>(errors);
     }
 
@@ -57,7 +58,7 @@ public class GlobalExceptionHandler {
             String errorMsg = error.getDefaultMessage();
             errors.put(fieldName, errorMsg);
         });
-        logger.fine("MethodArgumentNotValidException.class @RequestBody异常");
+        logger.debug("MethodArgumentNotValidException.class @RequestBody异常");
         return new ResultVO<>(errors);
     }
 
@@ -67,7 +68,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ResultVO<String>> handleGlobalExceptions(Exception ex, HttpServletRequest request) {
-        logger.fine("Exception.class 总异常");
+        logger.debug("Exception.class 总异常", ex);
         // 这里返回一个通用的错误信息，可以记录异常，发送通知等
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                              .body(new ResultVO<>("发生意外错误: " + ex.getMessage()));

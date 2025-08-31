@@ -15,4 +15,10 @@ public interface CategoryMapper {
     public List<Category> selectCategories();
 
     public Category selectCategoryByPostId(Long postId);
+
+    public Integer insertCategory(Category category);
+
+    public Integer deleteCategoryById(Integer[] ids);
+
+    public Integer updateCategory(Category category);
 }

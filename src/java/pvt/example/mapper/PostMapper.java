@@ -29,5 +29,7 @@ public interface PostMapper {
 
     public Integer updatePostTop(@Param("postId") Long postId, @Param("isTop") Integer isTop);
 
-    public Integer updatePostDel(@Param("postId") Long postId, @Param("isDel")Integer isDel);
+    public Integer updatePostDel(@Param("ids") Long[] ids, @Param("isDel")Integer isDel);
+
+    public  List<Post> selectRecyclePosts();
 }

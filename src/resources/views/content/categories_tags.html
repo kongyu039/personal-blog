@@ -1,0 +1,49 @@
+<link rel="stylesheet" th:href="@{/static/views/content/categories_tags.css}">
+<div id="admin-root" xmlns:th="http://www.thymeleaf.org/">
+  <!-- 分类管理 -->
+  <div class="item category">
+    <table class="layui-hide" id="category-table" lay-filter="category-table"></table>
+  </div>
+  <!-- 标签管理 -->
+  <div class="item tag">
+    <table class="layui-hide" id="tag-table" lay-filter="tag-table"></table>
+  </div>
+  <!-- toolbar 工具模版 -->
+  <script type="text/html" id="operate-toolbar">
+    <button class="layui-btn layui-btn-sm" lay-event="add">新增分签</button>
+    <button class="layui-btn layui-btn-sm layui-bg-orange" lay-event="batchDel">批量删除</button>
+  </script>
+  <!-- tool 操作模版 -->
+  <script type="text/html" id="operate-tool">
+    <button class="layui-btn layui-btn-sm layui-bg-purple" lay-event="del">删除</button>
+  </script>
+  <!-- category 新增模版 -->
+  <script type="text/html" id="category-add">
+    <form class="layui-form layui-form-pane" style="padding: 5px;" lay-filter="form-category-add">
+      <div class="layui-form-item">
+        <label class="layui-form-label">名称</label>
+        <div class="layui-input-block">
+          <input type="text" name="name" autocomplete="off" placeholder="请输入名称" lay-verify="required" class="layui-input">
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">概括</label>
+        <div class="layui-input-block">
+          <input type="text" name="summary" autocomplete="off" placeholder="请输入概括/摘要" class="layui-input">
+        </div>
+      </div>
+    </form>
+  </script>
+  <!-- tag 新增模版 -->
+  <script type="text/html" id="tag-add">
+    <form class="layui-form layui-form-pane" style="padding: 5px;" lay-filter="form-tag-add">
+      <div class="layui-form-item">
+        <label class="layui-form-label">名称</label>
+        <div class="layui-input-block">
+          <input type="text" name="name" autocomplete="off" placeholder="请输入名称" lay-verify="required" class="layui-input">
+        </div>
+      </div>
+    </form>
+  </script>
+  <script type="text/javascript" th:src="@{/static/views/content/categories_tags.js}"></script>
+</div>

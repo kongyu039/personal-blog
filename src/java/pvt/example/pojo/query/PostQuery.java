@@ -9,11 +9,21 @@ import java.util.List;
  */
 public class PostQuery {
     private String title;
+    private String titleQuery;
     private String summary;
+    private String summaryQuery;
     private Long categoryId;
     private List<Long> tagIds;
     private Integer page;
     private Integer limit;
+
+    public String getTitleQuery() { return titleQuery; }
+
+    public void setTitleQuery(String titleQuery) { this.titleQuery = titleQuery; }
+
+    public String getSummaryQuery() { return summaryQuery; }
+
+    public void setSummaryQuery(String summaryQuery) { this.summaryQuery = summaryQuery; }
 
     public String getTitle() { return title; }
 
@@ -43,7 +53,9 @@ public class PostQuery {
     public String toString() {
         return "PostQuery{" +
                 "title='" + title + '\'' +
+                ", titleQuery='" + titleQuery + '\'' +
                 ", summary='" + summary + '\'' +
+                ", summaryQuery='" + summaryQuery + '\'' +
                 ", categoryId=" + categoryId +
                 ", tagIds=" + tagIds +
                 ", page=" + page +

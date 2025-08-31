@@ -1,0 +1,14 @@
+#admin-root {
+  display: flex;
+  gap: 10px;
+}
+#admin-root .item {
+  background-color: #F9FDF5;
+  flex-direction: column;
+}
+#admin-root .category.item {
+  flex: 2;
+}
+#admin-root .tag.item {
+  flex: 1.5;
+}

@@ -1,5 +1,5 @@
 <!--
-<link rel="stylesheet" th:href="@{/views/content/home.css}">
+<link rel="stylesheet" th:href="@{/static/views/content/home.css}">
 <div xmlns:th="http://www.thymeleaf.org/" class="home">
   src/resources/views/content/home.html
   <script>
@@ -9,7 +9,16 @@
     // 首页包含 基础信息+系统基本信息(服务器信息)
   </script>
 </div>
+// TODO 文章数 分类数 标签数
+// eChart表格 分类-文章 标签-文章 数表/饼图/柱状图
+// 基础系统信息 电脑信息+jvm信息
 -->
+<link rel="stylesheet" th:href="@{/static/views/content/home.css}">
+<div id="admin-root" xmlns:th="http://www.thymeleaf.org/">
+
+
+  <script th:src="@{/static/views/content/home.js}"></script>
+</div>
 <body xmlns:th="http://www.thymeleaf.org/">
   <th:block th:include="~{common/fragment::common_head}" />
   <style type="text/less">

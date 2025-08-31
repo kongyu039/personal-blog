@@ -12,7 +12,8 @@
     FROM categories
   </select>
   <!-- 查询 Category 通过CategoryId -->
-  <select id="selectCategoryByCategoryId" parameterType="java.lang.Integer" resultType="pvt.example.pojo.entity.Category">
+  <select id="selectCategoryByCategoryId" parameterType="java.lang.Integer"
+          resultType="pvt.example.pojo.entity.Category">
     SELECT id, name FROM categories WHERE id = #{category_id}
   </select>
   <!-- 查询 Category 通过postId -->
@@ -22,4 +23,33 @@
            JOIN categories_posts ON categories.id = categories_posts.category_id
     WHERE categories_posts.post_id = #{postId}
   </select>
+  <!-- 增加 Category 返回生成的主键Id -->
+  <insert id="insertCategory" parameterType="pvt.example.pojo.entity.Category" keyProperty="id" useGeneratedKeys="true">
+    INSERT INTO categories
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="name != null and name.length()>0">name,</if>
+      <if test="summary != null and summary.length()>0">summary,</if>
+    </trim>
+    VALUES
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="name != null and name.length()>0">#{name},</if>
+      <if test="summary != null and summary.length()>0">#{summary},</if>
+    </trim>
+  </insert>
+  <!-- 通过id数组 删除分类 -->
+  <delete id="deleteCategoryById">
+    DELETE FROM categories
+    WHERE id IN
+    <foreach collection="array" item="id" open="(" separator="," close=")">#{id}</foreach>
+  </delete>
+  <!-- 更新 updateCategory 通过id -->
+  <update id="updateCategory">
+    UPDATE categories
+    <set>
+      <if test="name != null">name = #{name},</if>
+      <if test="summary != null">summary = #{summary},</if>
+    </set>
+    WHERE id = #{id}
+  </update>
+
 </mapper>
