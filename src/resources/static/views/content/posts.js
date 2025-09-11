@@ -147,7 +147,7 @@
           // 封面上传
           // noinspection JSCheckFunctionSignatures
           const coverUpload = upload.render({
-            elem: '#cover-upload-preview', field: 'image', url: ctxUrl + 'basic/r2upload', size: 2 * 1024 * 1024, auto: false,
+            elem: '#cover-upload-preview', field: 'image', url: ctxUrl + 'image/r2upload', size: 2 * 1024 * 1024, auto: false,
             accept: 'images', acceptMime: 'image/*', bindAction: '#cover-upload-btn',
             choose(obj) {
               console.log("choose", obj)

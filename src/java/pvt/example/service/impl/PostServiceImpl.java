@@ -25,6 +25,7 @@ import java.util.List;
 public class PostServiceImpl implements PostService {
     @Resource
     private PostMapper postMapper;
+
     @Resource
     private BridgeMapper bridgeMapper;
 

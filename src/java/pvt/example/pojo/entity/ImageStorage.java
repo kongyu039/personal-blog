@@ -8,7 +8,7 @@ package pvt.example.pojo.entity;
 public class ImageStorage {
     private Integer id; // 主键
     private String key; // 存储地址唯一Key
-    private Long postId; // 文章id
+    private Integer flag; // 是否存储 本地/远程
 
     public Integer getId() { return id; }
 
@@ -18,16 +18,16 @@ public class ImageStorage {
 
     public void setKey(String key) { this.key = key; }
 
-    public Long getPostId() { return postId; }
+    public Integer getFlag() { return flag; }
 
-    public void setPostId(Long postId) { this.postId = postId; }
+    public void setFlag(Integer flag) { this.flag = flag; }
 
     @Override
     public String toString() {
         return "ImageStorage{" +
                 "id=" + id +
                 ", key='" + key + '\'' +
-                ", postId=" + postId +
+                ", flag=" + flag +
                 '}';
     }
 }

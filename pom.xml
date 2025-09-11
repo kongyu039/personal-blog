@@ -17,8 +17,10 @@
     <spring.boot.version>2.7.18</spring.boot.version> <!-- springboot 版本 -->
     <mybatis.boot.version>2.2.1</mybatis.boot.version> <!-- mybatis-boot 版本 -->
     <sqlite.version>3.41.2.2</sqlite.version> <!-- sqlite 版本 -->
-    <freemarker.version>2.3.31</freemarker.version> <!-- freemarker 版本 -->
+    <freemarker.version>2.3.32</freemarker.version> <!-- freemarker 版本 -->
     <awssdk.version>2.27.13</awssdk.version> <!-- AWS SDK 版本 -->
+    <oshi.version>6.6.5</oshi.version> <!-- oshi 版本 -->
+    <jgit.version>5.13.3.202401111512-r</jgit.version> <!-- jGit 版本 -->
   </properties>
 
   <dependencyManagement>
@@ -54,6 +56,11 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-thymeleaf</artifactId>
     </dependency>
+    <!-- 引入FreeMarker的boot启动器 -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-freemarker</artifactId>
+    </dependency>
     <!-- Validation 校验starter -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -71,17 +78,29 @@
       <artifactId>sqlite-jdbc</artifactId>
       <version>${sqlite.version}</version>
     </dependency>
-    <!-- freemarker模板 -->
-    <dependency>
-      <groupId>org.freemarker</groupId>
-      <artifactId>freemarker</artifactId>
-      <version>${freemarker.version}</version>
-    </dependency>
     <!-- AWS SDK for S3 (兼容Cloudflare R2) -->
     <dependency>
       <groupId>software.amazon.awssdk</groupId>
       <artifactId>s3</artifactId>
       <version>${awssdk.version}</version>
+    </dependency>
+    <!-- OSHI 系统信息 -->
+    <dependency>
+      <groupId>com.github.oshi</groupId>
+      <artifactId>oshi-core</artifactId>
+      <version>${oshi.version}</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit -->
+    <dependency>
+      <groupId>org.eclipse.jgit</groupId>
+      <artifactId>org.eclipse.jgit</artifactId>
+      <version>${jgit.version}</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit.ssh.jsch -->
+    <dependency>
+      <groupId>org.eclipse.jgit</groupId>
+      <artifactId>org.eclipse.jgit.ssh.jsch</artifactId>
+      <version>${jgit.version}</version>
     </dependency>
     <!-- devtools热部署 -->
     <dependency>

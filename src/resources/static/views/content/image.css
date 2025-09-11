@@ -1,0 +1,7 @@
+#admin-root .layui-table-cell {
+  height: auto;
+  white-space: normal;
+}
+#admin-root .layui-table img {
+  max-width: 110px;
+}

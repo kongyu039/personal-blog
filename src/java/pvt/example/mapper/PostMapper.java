@@ -32,4 +32,5 @@ public interface PostMapper {
     public Integer updatePostDel(@Param("ids") Long[] ids, @Param("isDel")Integer isDel);
 
     public  List<Post> selectRecyclePosts();
+
 }

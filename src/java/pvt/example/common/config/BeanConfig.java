@@ -2,13 +2,16 @@ package pvt.example.common.config;
 
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.sqlite.SQLiteDataSource;
 import pvt.example.common.utils.AppUtil;
 
 import javax.sql.DataSource;
+import java.nio.file.Paths;
 
 /**
  * 信息：src/java/pvt/example/common/config/BeanConfig.java
@@ -17,32 +20,62 @@ import javax.sql.DataSource;
  */
 @Configuration
 public class BeanConfig {
-    /**
-     * @return 自定义数据源 一
-     */
-    @Bean
-    public DataSource dataSource() {
+    private static DataSource createDataSource(String url) {
         SQLiteDataSource dataSource = new SQLiteDataSource();
-        dataSource.setUrl("jdbc:sqlite:" + AppUtil.getJarDirectory() + "upload/database.db");
+        dataSource.setUrl(url);
         return dataSource;
     }
 
-    /**
-     * @param dataSource 自定义数据源一
-     * @return Sql会话工厂
-     * @throws Exception 异常
-     */
-    @Bean
-    public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
+    private static SqlSessionFactory createSqlSessionFactory(DataSource dataSource, String xmlPath) throws Exception {
         SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
         sessionFactory.setDataSource(dataSource);
         // 自定义配置
         org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
         configuration.setMapUnderscoreToCamelCase(true); // 开启驼峰命名映射
-        // configuration.getTypeHandlerRegistry().register(Date.class, new CustomDateTypeHandler());// 注册自定义 TypeHandler
         sessionFactory.setConfiguration(configuration);
-        sessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver()
-                                                  .getResources("classpath:mapper/*.xml")); // XML映射文件位置
+        sessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(xmlPath)); // XML映射文件位置
         return sessionFactory.getObject();
+    }
+
+    /**
+     * 主SQLite数据源
+     * @return 自定义数据源 一
+     */
+    @Primary
+    @Bean(name = "primaryDataSource")
+    public DataSource primaryDataSource() {
+        return BeanConfig.createDataSource("jdbc:sqlite:" + Paths.get(AppUtil.getJarDirectory(), "upload/database.db"));
+    }
+
+    /**
+     * 主SQLite工厂
+     * @param dataSource 自定义数据源一
+     * @return Sql会话工厂
+     * @throws Exception 异常
+     */
+    @Primary
+    @Bean(name = "primarySqlSessionFactory")
+    public SqlSessionFactory primarySqlSessionFactory(@Qualifier("primaryDataSource") DataSource dataSource) throws Exception {
+        return BeanConfig.createSqlSessionFactory(dataSource, "classpath*:mapper/*.xml");
+    }
+
+    /**
+     * 副SQLite数据源
+     * @return 自定义数据源 一
+     */
+    @Bean(name = "secondaryDataSource")
+    public DataSource secondaryDataSource() {
+        return BeanConfig.createDataSource("jdbc:sqlite:" + Paths.get(AppUtil.getJarDirectory(), "frontend/database.db"));
+    }
+
+    /**
+     * 副SQLite工厂
+     * @param dataSource 自定义数据源二
+     * @return Sql会话工厂
+     * @throws Exception 异常
+     */
+    @Bean(name = "secondarySqlSessionFactory")
+    public SqlSessionFactory secondarySqlSessionFactory(@Qualifier("secondaryDataSource")DataSource dataSource) throws Exception {
+        return BeanConfig.createSqlSessionFactory(dataSource, "classpath*:mapper2/*.xml");
     }
 }

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pvt.example.mapper2.BaseMapper2">
+  <select id="genDataBase" resultType="java.lang.Integer">SELECT 1</select>
+  <insert id="createPostTable">
+    CREATE TABLE IF NOT EXISTS "post" (
+      "post_id"     INTEGER NOT NULL,
+      "cover"       TEXT,
+      "title"       TEXT,
+      "summary"     TEXT,
+      "created_at"  INTEGER,
+      "updated_at"  INTEGER,
+      "category_id" INTEGER NOT NULL,
+      "is_top"      INTEGER DEFAULT 0,
+      PRIMARY KEY ("post_id")
+    )
+  </insert>
+  <insert id="createCategoryTable">
+    CREATE TABLE IF NOT EXISTS "category" (
+      "category_id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+      "name"        TEXT,
+      "summary"     TEXT
+    )
+  </insert>
+  <insert id="createTagTable">
+    CREATE TABLE IF NOT EXISTS "tag" (
+      "tag_id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+      "name"   TEXT
+    )
+  </insert>
+  <insert id="createTagPostTable">
+    CREATE TABLE IF NOT EXISTS "tag_post" (
+      "post_id" INTEGER NOT NULL,
+      "tag_id"  INTEGER NOT NULL,
+      PRIMARY KEY ("post_id", "tag_id")
+    )
+  </insert>
+  <!-- 批量插入 Post -->
+  <insert id="batchInsertPost" parameterType="pvt.example.pojo.entity.Post">
+    INSERT INTO post (post_id,cover,title,summary,created_at,updated_at,category_id,is_top)
+    VALUES
+    <foreach collection="list" item="post" separator=",">
+      (#{post.id},#{post.cover},#{post.title},#{post.summary},
+      #{post.createdAt},#{post.updatedAt},#{post.category.id},#{post.isTop})
+    </foreach>
+  </insert>
+  <!-- 批量插入 Category -->
+  <insert id="batchInsertCategory">
+    INSERT INTO category (category_id, name, summary)
+    VALUES
+    <foreach collection="list" item="category" separator=",">
+      (#{category.id},#{category.name},#{category.summary})
+    </foreach>
+  </insert>
+  <!-- 批量插入 Tag -->
+  <insert id="batchInsertTag">
+    INSERT INTO tag (tag_id,name)
+    VALUES
+    <foreach collection="list" item="tag" separator=",">(#{tag.id},#{tag.name})</foreach>
+  </insert>
+  <insert id="batchInsertTagPost">
+    INSERT INTO tag_post (tag_id,post_id)
+    VALUES
+    <foreach collection="list" item="tagPost" separator=",">(#{tagPost.tagId},#{tagPost.postId})</foreach>
+  </insert>
+</mapper>

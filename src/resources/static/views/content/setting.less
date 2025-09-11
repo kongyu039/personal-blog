@@ -1,1 +1,42 @@
 // src/resources/static/views/content/setting.less
+#admin-root {
+  display: grid; gap: 10px;padding: 10px;
+  grid-template-columns: repeat(2, 1fr); /* 2列，每列宽度相等 */
+  grid-auto-rows: 200px;
+  box-sizing: border-box;
+
+  > .blog-function, .basic-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: flex-start;
+    background-color: #E1FEFF;
+    padding-left: 10px;
+
+    > h2, div {flex: 1;}
+  }
+
+  .blog-function {
+    .btn-push, .btn-download {
+      background-color: #0DD9D6;
+      padding: 0 10px;
+      cursor: pointer;
+
+      &:hover {background-color: #B5EEB2}
+    }
+
+    > div {
+      flex: 1; display: flex;align-items: center;
+
+      input {width: 300px;}
+    }
+  }
+
+  > .basic-setting {
+    display: grid; gap: 10px;padding: 10px;
+    grid-template-columns: repeat(2, 1fr); /* 2列，每列宽度相等 */
+    grid-auto-rows: auto;
+    box-sizing: border-box;
+    background-color: #E1FEFF;
+  }
+}

@@ -1,0 +1,10 @@
+<link rel="stylesheet" th:href="@{/static/views/content/image.css}">
+<div id="admin-root" xmlns:th="http://www.thymeleaf.org/">
+  <!-- 分类管理 -->
+  <table class="layui-hide" id="image-table" lay-filter="image-table"></table>
+  <!-- 行工具模版 -->
+  <script type="text/html" id="image-tool">
+    <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="rowDelete">删除</a>
+  </script>
+  <script type="text/javascript" th:src="@{/static/views/content/image.js}"></script>
+</div>

@@ -44,7 +44,7 @@ public class PostController extends BaseController {
 
     /** 获取回收站文章 */
     @GetMapping("/recycle-posts")
-    private ResultVO<List<Post>> recyclePosts() {return successResultVO(postService.recyclePosts());}
+    private ResultVO<List<Post>> recyclePosts() { return successResultVO(postService.recyclePosts()); }
 
     /**
      * 新增上传文章

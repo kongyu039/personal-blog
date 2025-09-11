@@ -2,10 +2,34 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="pvt.example.mapper.BaseMapper">
-  <insert id="createTable">
-    CREATE TABLE IF NOT EXISTS users (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL
-    )
-  </insert>
+  <select id="selectAllPostCount" resultType="java.lang.Integer">SELECT COUNT(*) FROM posts</select>
+  <select id="selectAllCategoryCount" resultType="java.lang.Integer">SELECT COUNT(*) FROM categories</select>
+  <select id="selectAllTagCount" resultType="java.lang.Integer">SELECT COUNT(*) FROM tags</select>
+  <select id="selectAllRecycleCount" resultType="java.lang.Integer">SELECT COUNT(*) FROM posts WHERE is_del = 1</select>
+  <select id="selectAllImageCount" resultType="java.lang.Integer">SELECT COUNT(*) FROM image_storage</select>
+  <select id="selectAllTagPost" resultType="pvt.example.pojo.entity.TagPost">
+    SELECT tag_id,post_id FROM tags_posts
+  </select>
+  <select id="selectAllPostDayCount" resultType="java.util.Map">
+    SELECT-- 显示对应的日期字符串（便于阅读）
+          DATE(created_at / 1000, 'unixepoch') AS day_date,
+          COUNT(*) AS post_count
+    FROM posts
+    WHERE-- 筛选指定年份的数据
+         STRFTIME('%Y', COALESCE(created_at, 0) / 1000, 'unixepoch') = #{year}
+    GROUP BY-- 按日期分组
+            DATE(created_at / 1000, 'unixepoch');
+  </select>
+  <select id="selectOrderByCategoryCount" resultType="java.util.Map">
+    SELECT cate.name AS category, COUNT(categories_posts.category_id) AS value
+    FROM categories cate
+           LEFT JOIN categories_posts ON cate.id = categories_posts.category_id
+    GROUP BY cate.name
+  </select>
+  <select id="selectOrderByTagCount" resultType="java.util.Map">
+    SELECT tag.name AS tag, COUNT(tags_posts.tag_id) AS value
+    FROM tags tag
+           LEFT JOIN tags_posts ON tag.id = tags_posts.tag_id
+    GROUP BY tag.name
+  </select>
 </mapper>

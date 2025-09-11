@@ -1,13 +1,20 @@
-<!DOCTYPE html>
-<html lang="zh_CN" xmlns:th="http://www.thymeleaf.org/">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>system.html</title>
-</head>
-<body xmlns:th="http://www.thymeleaf.org/">
-  src/resources/views/content/system.html
-
-</body>
-</html>
+<link rel="stylesheet" th:href="@{/static/views/content/setting.css}">
+<div id="admin-root" xmlns:th="http://www.thymeleaf.org/">
+  <!-- 博客功能 发布Github 静态界面生成/下载 Github 设置 -->
+  <div class="blog-function">
+    <div class="btn-push">Github推送</div>
+    <div class="btn-download">博客生成下载</div>
+  </div>
+  <!-- 基础信息查看 -->
+  <div class="basic-info">
+    <h2 class="now-ip"></h2>
+    <h2 class="now-host"></h2>
+    <h2>白ip名单</h2>
+    <div class="now-ips"></div>
+    <h2>白host名单</h2>
+    <div class="now-hosts"></div>
+  </div>
+  <!-- 基础信息设置 -->
+  <div class="basic-setting"></div>
+  <script type="text/javascript" th:src="@{/static/views/content/setting.js}"></script>
+</div>

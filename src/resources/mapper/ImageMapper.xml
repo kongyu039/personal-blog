@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pvt.example.mapper.ImageMapper">
+  <insert id="insertImageStorage" keyProperty="id" useGeneratedKeys="true">
+    INSERT
+    INTO image_storage(key, flag)
+    VALUES (#{key}, #{flag})
+  </insert>
+  <select id="selectImageByFlag" resultType="pvt.example.pojo.entity.ImageStorage">
+    SELECT id,key,flag
+    FROM image_storage
+    <where>
+      <if test="flag != null">AND flag = #{flag}</if>
+    </where>
+  </select>
+  <select id="selectImageById" resultType="pvt.example.pojo.entity.ImageStorage">
+    SELECT id,key,flag
+    FROM image_storage
+    WHERE id = #{id}
+  </select>
+  <delete id="deleteImageById">
+    DELETE
+    FROM image_storage
+    WHERE id = #{id}
+  </delete>
+</mapper>

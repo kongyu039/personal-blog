@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  */
 @Controller
 public class ViewController {
+    /** 主页 */
     @GetMapping("/index.html")
     public String index() { return "index"; }
 
@@ -29,10 +30,15 @@ public class ViewController {
     @GetMapping("/content/setting.html")
     public String contentSetting() { return "content/setting"; }
 
+    /** 图片页面 */
+    @GetMapping("/content/image.html")
+    public String commonImage() { return "content/image"; }
+
     /** 回收站 */
     @GetMapping("/content/recycle.html")
     public String contentRecycle() { return "content/recycle"; }
 
+    /** 编辑页面 */
     @GetMapping("/common/editor.html")
     public String commonEditor() { return "common/editor"; }
 }

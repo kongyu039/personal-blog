@@ -10,24 +10,15 @@ spring:
   thymeleaf: # Thymeleaf设置
     prefix: classpath:/views/
     suffix: .html
+  freemarker:
+    enabled: false # 禁止自动装配freemarker
   web:
     resources:
       add-mappings: false
-
 server:
   port: 8899
   servlet:
     context-path: / # 整个项目的前缀
-
-#  datasource:
-#    url: jdbc:sqlite:${basedir}/database/dev.db3
-#  mvc:
-#    static-path-pattern: /static/** # 静态资源前缀
-#  web:
-#    resources:
-#      static-locations: classpath:/static/
-
-
 --- # pro 生产配置
 spring:
   config:

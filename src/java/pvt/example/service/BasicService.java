@@ -1,25 +1,24 @@
 package pvt.example.service;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
- * 信息：src/java/pvt/example/service/BasicService.java
+ * 信息：src/java/pvt/example/service/BasicService2.java
  * <p>日期：2025/7/31
  * <p>描述：
  */
 public interface BasicService {
     public Set<String> changeIpHost(String type, String content, String flag);
 
-    public String upload(MultipartFile imageFile);
+    public Map<String, String> getIpHost();
 
-    public String r2Upload(MultipartFile imageFile);
+    public Map<String, Integer> countTotalAll();
 
-    public String getR2KeyURL(String objectKey);
+    public List<Map<String, Integer>> countDayCalculate(String year);
 
-    public List<String> getAllR2KeyURL();
+    public Map<String, List<Map<String, Integer>>> countCategoryTag();
 
-    void deleteR2ByKey(String objectKey);
+    public Map<String, Map<String, String>> getSystemInfo();
 }

@@ -5,14 +5,19 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * 信息：src/java/pvt/example/BootMain.java
  * <p>日期：2025/7/26
  * <p>描述：一体式博客与发布
  */
-@SpringBootApplication// 默认解析注解的根包
+@SpringBootApplication // 默认解析注解的根包
+@EnableScheduling // 开启定时任务
+@EnableAsync
 @MapperScan(basePackages = {"pvt.example.mapper"}) // 同包下Mapper同位置对应xxxMapper.xml
+@MapperScan(basePackages = {"pvt.example.mapper2"},sqlSessionFactoryRef = "secondarySqlSessionFactory")
 public class BootMain extends SpringBootServletInitializer {
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(BootMain.class);
