@@ -1,6 +1,6 @@
 // upload/database.js
 const dbJson = {
-  initPageId: 21,
+  initPageId: Number(localStorage.getItem('pageId') || 21),
   menuData: [
     {id: 0, name: "首页", icon: "fa-home", path: "content/home.html", isExtLink: false},
     {

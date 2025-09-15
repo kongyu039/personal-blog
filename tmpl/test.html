@@ -9,7 +9,7 @@
 </head>
 <body>
   <div id="show"></div>
-  <script src="./sql/sql-wasm.min.js" type="text/javascript"></script>
+  <script src="/sql/sql-wasm.min.js" type="text/javascript"></script>
   <script type="text/javascript">
     initSqlJs({locateFile: () => "./sql/sql-wasm.wasm"}).then(async function (SQL) {
       fetch("./database.db").then(res => res.arrayBuffer())

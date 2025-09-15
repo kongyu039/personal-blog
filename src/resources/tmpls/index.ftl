@@ -11,5 +11,6 @@
 </head>
 <body>
   src/resources/templates/index.html
+  <#include "post.ftl">
 </body>
 </html>

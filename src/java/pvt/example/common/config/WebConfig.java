@@ -16,8 +16,7 @@ import java.io.File;
 public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // 获取当前工作目录
-        // 定义静态资源路径，假设你的静态资源在 user.dir 目录下的 "static" 文件夹中
+        // 获取当前工作目录 定义静态资源路径，假设你的静态资源在 user.dir 目录下的 "static" 文件夹中
         String uploadPath = "file:" + new File(AppUtil.getJarDirectory(), "upload").getAbsolutePath() + File.separator;
         // 添加资源处理器，映射到 /static/**
         registry.addResourceHandler("/static/**")

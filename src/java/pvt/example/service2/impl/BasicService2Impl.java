@@ -130,7 +130,7 @@ public class BasicService2Impl implements BasicService2 {
     /** 渲染并生成模版 */
     @Override
     public Boolean handlerTmpls() {
-        // TODO 完成博客 index.ftl 和 post.ftl
+        // TODO 完成博客 index.ftl 和 post.ftl 再谈后续
         { // 1. 生成 index.html
             Map<String, Object> dataModelIndex = new HashMap<String, Object>();
             File indexFile = Paths.get(AppUtil.getJarDirectory(), "frontend", "index.html").toFile();

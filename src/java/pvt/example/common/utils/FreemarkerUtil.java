@@ -3,11 +3,10 @@ package pvt.example.common.utils;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.Map;
 
 /**
@@ -17,15 +16,13 @@ import java.util.Map;
  */
 public class FreemarkerUtil {
     private static final Configuration configuration;
-    // 初始化FreeMarker配置
+
     static {
+        // 初始化FreeMarker配置
         configuration = new Configuration(Configuration.VERSION_2_3_32);
         try {
-            // 设置模板文件所在目录（classpath下的tmpls目录）
-            Resource resource = new ClassPathResource("tmpls/");
-            configuration.setDirectoryForTemplateLoading(resource.getFile());
-            // 设置编码
-            configuration.setDefaultEncoding(StandardCharsets.UTF_8.name());
+            configuration.setDirectoryForTemplateLoading(Paths.get(AppUtil.getJarDirectory(),"tmpl").toFile());// 设置模板文件所在目录（classpath下的tmpls目录）
+            configuration.setDefaultEncoding(StandardCharsets.UTF_8.name());// 设置编码
         } catch (IOException e) {
             throw new RuntimeException("初始化FreeMarker配置失败", e);
         }

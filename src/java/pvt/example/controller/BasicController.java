@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pvt.example.common.config.GlobalVariable;
+import pvt.example.common.utils.FreemarkerUtil;
 import pvt.example.common.utils.SnowFlakeUtil;
 import pvt.example.pojo.vo.ResultVO;
 import pvt.example.service.BasicAsyncService;
@@ -127,5 +128,7 @@ public class BasicController extends BaseController {
     }
 
     @GetMapping("/test")
-    public ResultVO<String> test() { return successResultVO(null); }
+    public ResultVO<String> test() {
+        System.out.println(FreemarkerUtil.generateString("index.ftl", null));
+        return successResultVO(null); }
 }
