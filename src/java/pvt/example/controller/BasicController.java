@@ -119,8 +119,8 @@ public class BasicController extends BaseController {
         {// 异步执行
             if (!basicService2.cleanDir()) { return successResultVO("清除失败"); }
             if (!basicService2.createDir()) { return successResultVO("初始化目录失败"); }
-            if (!basicService2.handlerDataBase()) { return successResultVO("表初始化失败"); }
             if (!basicService2.handlerCopyTmpls()) { return successResultVO("Tmpls复制失败"); }
+            if (!basicService2.handlerDataBase()) { return successResultVO("表初始化失败"); }
             if (!basicService2.handlerTmpls()) { return successResultVO("模版填充复制失败"); }
             globalVariable.setGenFileFlag(false);
         }
@@ -129,6 +129,6 @@ public class BasicController extends BaseController {
 
     @GetMapping("/test")
     public ResultVO<String> test() {
-        System.out.println(FreemarkerUtil.generateString("index.ftl", null));
+        System.out.println(FreemarkerUtil.generateString("post.ftl", null));
         return successResultVO(null); }
 }

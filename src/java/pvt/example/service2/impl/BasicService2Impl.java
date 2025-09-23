@@ -17,6 +17,7 @@ import pvt.example.service2.BasicService2;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -47,7 +48,7 @@ public class BasicService2Impl implements BasicService2 {
     /** 初始化 Post 文章表 */
     private Integer initPostData() {
         Integer total = 0;
-        List<List<Post>> postLists = AppUtil.splitList(postMapper.selectPost(null), BATCH_SIZE);
+        List<List<Post>> postLists = AppUtil.splitList(postMapper.selectPostAllBasic(), BATCH_SIZE);
         for (List<Post> posts : postLists) { total += baseMapper2.batchInsertPost(posts); }
         return total;
     }
@@ -113,6 +114,11 @@ public class BasicService2Impl implements BasicService2 {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean handlerDataBase() {
+        try {
+            Files.deleteIfExists(Paths.get(AppUtil.getJarDirectory(), "frontend", "database.db"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         int total = 0;
         total += this.genDataBase();
         total += this.initData2DataBase();
@@ -122,7 +128,7 @@ public class BasicService2Impl implements BasicService2 {
     /** 复制模版静态资源 */
     @Override
     public Boolean handlerCopyTmpls() {
-        Path sourceDir = Paths.get(AppUtil.getJarDirectory(), "upload", "tmpl");
+        Path sourceDir = Paths.get(AppUtil.getJarDirectory(), "tmpl");
         Path targetDir = Paths.get(AppUtil.getJarDirectory(), "frontend");
         return AppUtil.copyDirWithSpringUtil(sourceDir, targetDir);
     }
@@ -130,19 +136,16 @@ public class BasicService2Impl implements BasicService2 {
     /** 渲染并生成模版 */
     @Override
     public Boolean handlerTmpls() {
-        // TODO 完成博客 index.ftl 和 post.ftl 再谈后续
-        { // 1. 生成 index.html
-            Map<String, Object> dataModelIndex = new HashMap<String, Object>();
-            File indexFile = Paths.get(AppUtil.getJarDirectory(), "frontend", "index.html").toFile();
-            FreemarkerUtil.generateFile("index.ftl", dataModelIndex, indexFile);
-        }
-        { // 2. 生成 post.html
-            List<Post> posts = postMapper.selectPost(null);
+        {/* 1. 生成index.html */}
+        { // 2. 生成文章 post.html
+            // TODO 没有获取 htmlContent
+            List<Post> posts = postMapper.selectPostAllBasic();
             for (Post post : posts) {
                 Map<String, Object> dataModelPost = new HashMap<String, Object>();
                 String dateFormatter = AppUtil.dateToFormatter(post.getCreatedAt());
                 dataModelPost.put("post", post);
-                File postFile = Paths.get(AppUtil.getJarDirectory(), "frontend", dateFormatter, post.getId() + ".html").toFile();
+                System.out.println("post = " + post);
+                File postFile = Paths.get(AppUtil.getJarDirectory(), "frontend", "post", dateFormatter, post.getId() + ".html").toFile();
                 FreemarkerUtil.generateFile("post.ftl", dataModelPost, postFile);
             }
         }

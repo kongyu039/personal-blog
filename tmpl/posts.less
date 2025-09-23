@@ -1,0 +1,24 @@
+// tmpl/posts.less
+// z_test/index.less
+body {
+  padding-top: 46px;width: 100vw;height: 100vh;
+  background: #F0F0F5 url("/static/img/default-bg.png") no-repeat  center / cover;
+  @media (max-width: 768px) {
+    animation: backgroundMove 8s alternate infinite; /* 应用动画 */
+  }
+
+  > div:last-of-type { overflow-y: auto;}
+
+  // 1100px Markdown 文章内容宽度
+  // 300px 目录宽度 带有滚动条
+  // 划分为13个 1(1)1 7 1(1)1
+  @keyframes backgroundMove {
+    0% {background-position: 0 0;}
+    100% {background-position: 100% 0;}
+  }
+}
+
+.contain {
+  background-color: #EEEEEE;
+
+}

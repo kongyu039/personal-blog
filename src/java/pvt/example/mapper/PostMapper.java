@@ -17,6 +17,8 @@ import java.util.List;
 public interface PostMapper {
     public List<Post> selectPost(PostQuery postQuery);
 
+    public List<Post> selectPostAllBasic();
+
     public Integer selectPostCount(PostQuery postQuery);
 
     public Post selectPostByPostId(Long id);
@@ -29,8 +31,7 @@ public interface PostMapper {
 
     public Integer updatePostTop(@Param("postId") Long postId, @Param("isTop") Integer isTop);
 
-    public Integer updatePostDel(@Param("ids") Long[] ids, @Param("isDel")Integer isDel);
+    public Integer updatePostDel(@Param("ids") Long[] ids, @Param("isDel") Integer isDel);
 
-    public  List<Post> selectRecyclePosts();
-
+    public List<Post> selectRecyclePosts();
 }

@@ -1,12 +1,13 @@
 package pvt.example.common.utils;
 
+import freemarker.cache.ClassTemplateLoader;
+import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 import java.util.Map;
 
 /**
@@ -20,12 +21,15 @@ public class FreemarkerUtil {
     static {
         // 初始化FreeMarker配置
         configuration = new Configuration(Configuration.VERSION_2_3_32);
-        try {
-            configuration.setDirectoryForTemplateLoading(Paths.get(AppUtil.getJarDirectory(),"tmpl").toFile());// 设置模板文件所在目录（classpath下的tmpls目录）
-            configuration.setDefaultEncoding(StandardCharsets.UTF_8.name());// 设置编码
-        } catch (IOException e) {
-            throw new RuntimeException("初始化FreeMarker配置失败", e);
-        }
+        // FreeMarkerConfigurationFactoryBean factoryBean = new FreeMarkerConfigurationFactoryBean();
+        // 设置类路径下的模板目录
+        // factoryBean.setTemplateLoaderPath("classpath:/tmpls/");
+        // configuration.setClassLoaderForTemplateLoading();
+        // TODO 模版目录路径不对劲啊
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        TemplateLoader templateLoader = new ClassTemplateLoader(classLoader, "/tmpls/");
+        configuration.setTemplateLoader(templateLoader);// 设置模板文件所在目录（classpath下的tmpls目录）
+        configuration.setDefaultEncoding(StandardCharsets.UTF_8.name());// 设置编码
     }
 
     /**

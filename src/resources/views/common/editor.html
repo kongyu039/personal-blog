@@ -47,7 +47,7 @@
 </head>
 <body style="padding: 3px">
   <form>
-    <input type="text" placeholder="请输入文章标题*" name="title" style="width: 34%;" />
+    <input type="text" placeholder="*请输入文章标题" name="title" style="width: 34%;" />
     <input type="text" placeholder="请输入文章概括/摘要" name="summary" style="width: 59%;" />
     <input type="button" value="预览" style="width: 5%;cursor: pointer;" />
   </form>
@@ -82,7 +82,7 @@
     }
     const adminVditor = new Vditor('editor', {
       cdn: ctxUrl + 'static/lib/vditor',
-      mode: 'wysiwyg', width: '100%',
+      mode: 'ir', width: '100%',
       height: 'calc(100vh - 80px)',
       counter: {enable: true},
       outline: {enable: true},

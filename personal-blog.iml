@@ -2,7 +2,7 @@
 <module version="4">
   <component name="AdditionalModuleElements">
     <content url="file://$MODULE_DIR$" dumb="true">
-      <sourceFolder url="file://$MODULE_DIR$/z_test" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/tmpl" type="java-test-resource" />
     </content>
   </component>
 </module>

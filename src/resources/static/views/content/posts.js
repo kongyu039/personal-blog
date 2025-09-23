@@ -212,8 +212,8 @@
             }
             data.field['title'] = titleStr
             data.field['summary'] = summaryStr
-            data.field['content'] = adminVditor.getValue()
-            data.field['htmlContent'] = adminVditor.getHTML()
+            data.field['content'] = adminVditor.getValue()?.trim()
+            data.field['htmlContent'] = adminVditor.getHTML()?.trim()
             const field = data.field // 获取表单字段值
             $.ajax({
               url: url, type: 'post', data: field, dataType: 'json', success(res) {

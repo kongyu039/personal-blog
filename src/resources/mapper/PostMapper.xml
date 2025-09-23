@@ -45,6 +45,14 @@
       LIMIT #{limit} OFFSET #{offset}
     </if>
   </select>
+  <select id="selectPostAllBasic" resultMap="base_result_map">
+    SELECT id, cover, title, summary, html_content, created_at, updated_at, is_top,
+           cp.category_id AS category_id
+    FROM posts
+           JOIN categories_posts cp ON id = cp.post_id
+    WHERE is_del = 0
+    ORDER BY is_top DESC, id
+  </select>
   <!-- 统计"基础信息 List<Post>"数量 -->
   <select id="selectPostCount" parameterType="pvt.example.pojo.query.PostQuery" resultType="java.lang.Integer">
     SELECT COUNT(*) FROM posts
@@ -77,6 +85,7 @@
     WHERE is_del = 0
       AND id = #{id}
   </select>
+  <!-- 回收站post -->
   <select id="selectRecyclePosts" resultMap="base_result_map">
     SELECT id, cover, title, summary, created_at, updated_at, is_top, is_del,
            cp.category_id AS category_id

@@ -1,0 +1,26 @@
+body {
+  padding-top: 46px;
+  width: 100vw;
+  height: 100vh;
+  background: #F0F0F5 url("/static/img/default-bg.png") no-repeat center / cover;
+}
+@media (max-width: 768px) {
+  body {
+    animation: backgroundMove 8s alternate infinite;
+    /* 应用动画 */
+  }
+}
+body > div:last-of-type {
+  overflow-y: auto;
+}
+@keyframes backgroundMove {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 100% 0;
+  }
+}
+.contain {
+  background-color: #EEEEEE;
+}

@@ -25,7 +25,6 @@ import java.util.List;
 public class PostServiceImpl implements PostService {
     @Resource
     private PostMapper postMapper;
-
     @Resource
     private BridgeMapper bridgeMapper;
 
@@ -71,6 +70,7 @@ public class PostServiceImpl implements PostService {
         Date currDate = new Date();
         postRequest.setCreatedAt(currDate);
         postRequest.setUpdatedAt(currDate);
+        if ("".equalsIgnoreCase(postRequest.getCover())) { postRequest.setCover(null); }
         postMapper.insertPost(postRequest);
         bridgeMapper.insertCategoryPost(postRequest);
         if (postRequest.getTagIds().length > 0) {
