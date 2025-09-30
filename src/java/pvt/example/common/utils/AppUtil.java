@@ -5,9 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.system.ApplicationHome;
 import org.springframework.util.FileSystemUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
@@ -21,6 +19,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * 信息：src/java/pvt/example/common/utils/AppUtil.java
@@ -50,6 +51,13 @@ public class AppUtil {
             throw new RuntimeException("无法获取JAR包目录", e);
         }
     }
+
+    /**
+     * 获取当前应用程序的运行目录(带有/)。
+     * @param dirPath 不定路径
+     * @return 应用程序的运行目录路径
+     */
+    public static Path getJarDirectory(String... dirPath) { return Paths.get(AppUtil.getJarDirectory(), dirPath); }
 
     /** 获取target的目录或者jar包的位置 */
     public static String getLocalDirectory() {
@@ -251,6 +259,54 @@ public class AppUtil {
         } catch (IOException e) {
             logger.debug(e.getMessage());
             return false;
+        }
+    }
+
+    /**
+     * 私有 公共方法：用于将目录中的文件压缩到ZIP输出流中
+     * @param sourceDirPath 目录地址
+     * @param zipOutputStream zip文件输出流
+     */
+    private static void zipFiles(Path sourceDirPath, ZipOutputStream zipOutputStream) throws IOException {
+        // 手动创建流并在完成后关闭
+        try (Stream<Path> paths = Files.walk(sourceDirPath)) {
+            paths.filter(path -> !Files.isDirectory(path))
+                 .forEach(path -> {
+                     ZipEntry zipEntry = new ZipEntry(sourceDirPath.relativize(path).toString());
+                     try {
+                         zipOutputStream.putNextEntry(zipEntry);
+                         Files.copy(path, zipOutputStream);
+                         zipOutputStream.closeEntry();
+                     } catch (IOException e) {
+                         System.err.println("Error while zipping: " + e.getMessage());
+                     }
+                 });
+        }
+    }
+
+    /**
+     * 目录打包为 Zip 文件 第一个 zipDirectory 方法，返回 zip 文件
+     * @param sourceDirPath 目录地址
+     * @param zipFilePath zip文件地址
+     */
+    public static File zipDirectory(Path sourceDirPath, Path zipFilePath) throws IOException {
+        try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(zipFilePath.toString()))) {
+            zipFiles(sourceDirPath, zipOutputStream);
+            return zipFilePath.toFile();
+        }
+    }
+
+    /**
+     * 目录打包为 byte数组 第二个 zipDirectory 方法，返回 byte 数组
+     * @param sourceDirPath 源路径
+     * @return byte数组
+     */
+    public static byte[] zipDirectory(Path sourceDirPath) throws IOException {
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+             ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream)) {
+            zipFiles(sourceDirPath, zipOutputStream);
+            zipOutputStream.finish();
+            return byteArrayOutputStream.toByteArray();
         }
     }
 }

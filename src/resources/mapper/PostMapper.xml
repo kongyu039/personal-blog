@@ -46,7 +46,7 @@
     </if>
   </select>
   <select id="selectPostAllBasic" resultMap="base_result_map">
-    SELECT id, cover, title, summary, html_content, created_at, updated_at, is_top,
+    SELECT id, cover, title, summary, content, html_content, created_at, updated_at, is_top,
            cp.category_id AS category_id
     FROM posts
            JOIN categories_posts cp ON id = cp.post_id

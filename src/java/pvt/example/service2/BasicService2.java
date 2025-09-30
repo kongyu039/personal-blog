@@ -6,6 +6,10 @@ package pvt.example.service2;
  * <p>描述：
  */
 public interface BasicService2 {
+    public String genFileDir();
+
+    public byte[] zipFileDir();
+
     public Boolean createDir();
 
     public Boolean cleanDir();

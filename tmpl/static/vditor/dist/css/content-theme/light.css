@@ -25,77 +25,95 @@
  *
  */
 .vditor-reset h1, .vditor-reset h2 {
-    padding-bottom: 0.3em;
-    border-bottom: 1px solid #eaecef;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid #EAECEF;
 }
 
 .vditor-reset hr {
-    background-color: #eaecef;
+  background-color: #EAECEF;
 }
 
 .vditor-reset blockquote {
-    color: #6a737d;
-    border-left: .25em solid #eaecef
+  color: #6A737D;
+  border-left: .25em solid #EAECEF
 }
 
 .vditor-reset iframe {
-    border: 1px solid #d1d5da
+  border: 1px solid #D1D5DA
 }
 
 .vditor-reset table tr {
-    border-top: 1px solid #c6cbd1;
-    background-color: #fafbfc
+  border-top: 1px solid #C6CBD1;
+  background-color: #FAFBFC
 }
 
 .vditor-reset table td, .vditor-reset table th {
-    border: 1px solid #dfe2e5
+  border: 1px solid #DFE2E5
 }
 
 .vditor-reset table tbody tr:nth-child(2n) {
-    background-color: #fff
+  background-color: #FFFFFF
 }
 
 .vditor-reset code:not(.hljs):not(.highlight-chroma) {
-    background-color: rgba(27, 31, 35, .05);
+  background-color: rgba(27, 31, 35, .05);
 }
 
 .vditor-reset kbd {
-    color: #24292e;
-    background-color: #fafbfc;
-    border: solid 1px #d1d5da;
-    box-shadow: inset 0 -1px 0 #d1d5da;
+  color: #24292E;
+  background-color: #FAFBFC;
+  border: solid 1px #D1D5DA;
+  box-shadow: inset 0 -1px 0 #D1D5DA;
 }
 
 .vditor-speech {
-    background-color: #f6f8fa;
-    border: 1px solid #d1d5da;
-    color: #586069;
+  background-color: #F6F8FA;
+  border: 1px solid #D1D5DA;
+  color: #586069;
 }
 
 .vditor-speech--current, .vditor-speech:hover {
-    color: #4285f4;
+  color: #4285F4;
 }
 
 .vditor-linkcard a {
-    background-color: #f6f8fa;
+  background-color: #F6F8FA;
 }
 
 .vditor-linkcard a:visited .vditor-linkcard__abstract {
-    color: rgba(88, 96, 105, 0.36);
+  color: rgba(88, 96, 105, 0.36);
 }
 
 .vditor-linkcard__title {
-    color: #24292e;
+  color: #24292E;
 }
 
 .vditor-linkcard__abstract {
-    color: #586069;
+  color: #586069;
 }
 
 .vditor-linkcard__site {
-    color: #4285f4;
+  color: #4285F4;
 }
 
 .vditor-linkcard__image {
-    background-color: rgba(88, 96, 105, 0.36);
+  background-color: rgba(88, 96, 105, 0.36);
+}
+
+/* 自定义 */
+.vditor-reset h1,
+.vditor-reset h2,
+.vditor-reset h3,
+.vditor-reset h4,
+.vditor-reset h5,
+.vditor-reset h6 {
+  margin-top: 14px;
+  margin-bottom: 10px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.vditor-reset p {
+  margin-top: 0;
+  margin-bottom: 8px;
 }

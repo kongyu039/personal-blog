@@ -84,9 +84,10 @@ function timestampToYMdHM(ms) {
  * @param postId {number} 文章id
  * @return {string} postUrl
  */
-function postUrlHandler(ms, postId) {return "/post/" + timestampToYMd(ms) + "/" + postId + ".html"}
+function postUrlHandler(ms, postId) {return "/posts/" + timestampToYMd(ms) + "/" + postId + ".html"}
 
-/** 稳定运行时间 年,天,时,分
+/**
+ * 运行时间 N年N天N时N分
  * @param ms 时间戳ms
  * @return {{hour: number, year: number, day: number, minute: number}}
  */
@@ -102,4 +103,14 @@ function stableRunningTime(ms) {
     , minuteCalc = 60 * 1000
     , minute = Math.floor((timeMs - (yearCalc * year) - (dayCalc * day) - (hourCalc * hour)) / minuteCalc)
   return {year, day, hour, minute}
+}
+
+/**
+ * 运行时间 N年N天N时N分
+ * @param ms 毫秒时间戳
+ * @return {string}
+ */
+function stableRunningTimeStr(ms) {
+  const tempTime = stableRunningTime(ms)
+  return `${ tempTime.year }年${ tempTime.day }天${ tempTime.hour }小时${ tempTime.minute }分`
 }

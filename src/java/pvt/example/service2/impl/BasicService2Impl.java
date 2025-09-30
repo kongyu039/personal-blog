@@ -1,5 +1,8 @@
 package pvt.example.service2.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pvt.example.common.utils.AppUtil;
@@ -44,6 +47,10 @@ public class BasicService2Impl implements BasicService2 {
     private TagMapper tagMapper;
     @Resource
     private BaseMapper baseMapper;
+    @Resource
+    @Lazy
+    private BasicService2 basicService2;
+    private static final Logger logger = LoggerFactory.getLogger(BasicService2Impl.class);
 
     /** 初始化 Post 文章表 */
     private Integer initPostData() {
@@ -101,21 +108,21 @@ public class BasicService2Impl implements BasicService2 {
     /** 创建生成目录 */
     @Override
     public Boolean createDir() {
-        Path path = Paths.get(AppUtil.getJarDirectory(), "frontend");
+        Path path = AppUtil.getJarDirectory("frontend");
         if (!Files.exists(path)) { return new File(path.toUri()).mkdirs(); }
         return true;
     }
 
     /** 清除生成目录 */
     @Override
-    public Boolean cleanDir() { return AppUtil.delFileDir(Paths.get(AppUtil.getJarDirectory(), "frontend")); }
+    public Boolean cleanDir() { return AppUtil.delFileDir(AppUtil.getJarDirectory("frontend")); }
 
     /** 数据库和数据初始化 */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean handlerDataBase() {
         try {
-            Files.deleteIfExists(Paths.get(AppUtil.getJarDirectory(), "frontend", "database.db"));
+            Files.deleteIfExists(AppUtil.getJarDirectory("frontend", "database.db"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -128,8 +135,8 @@ public class BasicService2Impl implements BasicService2 {
     /** 复制模版静态资源 */
     @Override
     public Boolean handlerCopyTmpls() {
-        Path sourceDir = Paths.get(AppUtil.getJarDirectory(), "tmpl");
-        Path targetDir = Paths.get(AppUtil.getJarDirectory(), "frontend");
+        Path sourceDir = AppUtil.getJarDirectory("tmpl");
+        Path targetDir = AppUtil.getJarDirectory("frontend");
         return AppUtil.copyDirWithSpringUtil(sourceDir, targetDir);
     }
 
@@ -138,17 +145,49 @@ public class BasicService2Impl implements BasicService2 {
     public Boolean handlerTmpls() {
         {/* 1. 生成index.html */}
         { // 2. 生成文章 post.html
-            // TODO 没有获取 htmlContent
             List<Post> posts = postMapper.selectPostAllBasic();
             for (Post post : posts) {
                 Map<String, Object> dataModelPost = new HashMap<String, Object>();
                 String dateFormatter = AppUtil.dateToFormatter(post.getCreatedAt());
                 dataModelPost.put("post", post);
-                System.out.println("post = " + post);
-                File postFile = Paths.get(AppUtil.getJarDirectory(), "frontend", "post", dateFormatter, post.getId() + ".html").toFile();
+                File postFile = Paths.get(AppUtil.getJarDirectory(), "frontend", "posts", dateFormatter, post.getId() + ".html").toFile();
                 FreemarkerUtil.generateFile("post.ftl", dataModelPost, postFile);
             }
         }
         return true;
+    }
+
+    /** 生成目录文件 */
+    @Override
+    public String genFileDir() {
+        try { if (!basicService2.cleanDir()) { return "清除失败"; } } catch (Exception e) { return "清除失败"; }
+        try { if (!basicService2.createDir()) { return "初始化目录失败"; } } catch (Exception e) { return "初始化目录失败"; }
+        try { if (!basicService2.handlerCopyTmpls()) { return "Tmpls复制失败"; } } catch (Exception e) { return "Tmpls复制失败"; }
+        try { if (!basicService2.handlerDataBase()) { return "数据库表初始化失败"; } } catch (Exception e) { return "数据库表初始化失败"; }
+        try { if (!basicService2.handlerTmpls()) { return "模版填充失败"; } } catch (Exception e) { return "模版填充失败"; }
+        return null;
+    }
+
+    @Override
+    public byte[] zipFileDir() {
+        byte[] zipBytes;
+        // 提取到别的方法上;
+        try {
+            Path sourceDirPath = AppUtil.getJarDirectory("frontend"); // 源目录路径
+            zipBytes = AppUtil.zipDirectory(sourceDirPath);// 调用工具类方法生成ZIP文件的字节数组
+        } catch (IOException e) {
+            logger.debug("zip打包失败");
+            return null;
+        }
+        try {
+            if (!basicService2.cleanDir()) {
+                logger.debug("二次清除失败");
+                return null;
+            }
+        } catch (Exception e) {
+            logger.debug("二次清除失败");
+            return null;
+        }
+        return zipBytes;
     }
 }

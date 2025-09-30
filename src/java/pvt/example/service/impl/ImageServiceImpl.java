@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -59,7 +58,7 @@ public class ImageServiceImpl implements ImageService {
      * @throws IOException IO异常
      */
     private void localStorage(MultipartFile imageFile, String objectKey) throws IOException {
-        File fileDist = Paths.get(AppUtil.getJarDirectory(), "upload/images/", objectKey).toFile();
+        File fileDist = AppUtil.getJarDirectory("upload", "images", objectKey).toFile();
         if (!fileDist.getParentFile().exists()) {
             //noinspection ResultOfMethodCallIgnored
             fileDist.getParentFile().mkdirs();
@@ -86,7 +85,7 @@ public class ImageServiceImpl implements ImageService {
         ImageStorage imageStorage = imageMapper.selectImageById(id);
         if (imageStorage == null) { return null; }
         if (imageStorage.getFlag() == 0) {
-            Path path = Paths.get(AppUtil.getJarDirectory(), "upload/images/", imageStorage.getKey());
+            Path path = AppUtil.getJarDirectory("upload", "images", imageStorage.getKey());
             File file = path.toFile();
             //noinspection ResultOfMethodCallIgnored
             file.delete();

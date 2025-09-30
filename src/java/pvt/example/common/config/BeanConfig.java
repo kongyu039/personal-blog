@@ -11,7 +11,6 @@ import org.sqlite.SQLiteDataSource;
 import pvt.example.common.utils.AppUtil;
 
 import javax.sql.DataSource;
-import java.nio.file.Paths;
 
 /**
  * 信息：src/java/pvt/example/common/config/BeanConfig.java
@@ -44,7 +43,7 @@ public class BeanConfig {
     @Primary
     @Bean(name = "primaryDataSource")
     public DataSource primaryDataSource() {
-        return BeanConfig.createDataSource("jdbc:sqlite:" + Paths.get(AppUtil.getJarDirectory(), "upload/database.db"));
+        return BeanConfig.createDataSource("jdbc:sqlite:" + AppUtil.getJarDirectory("upload", "database.db"));
     }
 
     /**
@@ -65,7 +64,7 @@ public class BeanConfig {
      */
     @Bean(name = "secondaryDataSource")
     public DataSource secondaryDataSource() {
-        return BeanConfig.createDataSource("jdbc:sqlite:" + Paths.get(AppUtil.getJarDirectory(), "frontend/database.db"));
+        return BeanConfig.createDataSource("jdbc:sqlite:" + AppUtil.getJarDirectory("frontend", "database.db"));
     }
 
     /**
@@ -75,7 +74,7 @@ public class BeanConfig {
      * @throws Exception 异常
      */
     @Bean(name = "secondarySqlSessionFactory")
-    public SqlSessionFactory secondarySqlSessionFactory(@Qualifier("secondaryDataSource")DataSource dataSource) throws Exception {
+    public SqlSessionFactory secondarySqlSessionFactory(@Qualifier("secondaryDataSource") DataSource dataSource) throws Exception {
         return BeanConfig.createSqlSessionFactory(dataSource, "classpath*:mapper2/*.xml");
     }
 }

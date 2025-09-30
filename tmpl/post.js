@@ -22,6 +22,7 @@
     , excerptElem = document.querySelector('.contain-right .excerpt')
   nameElem.textContent = dbJson.name
   excerptElem.textContent = dbJson.excerpt
+  announcementContentElem.textContent = dbJson.announcement;
   numberInputElem.value = new Date().getFullYear()
   numberInputElem.addEventListener('input', function () {
     const tempNum = Number(this.value)

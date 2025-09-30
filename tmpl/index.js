@@ -24,9 +24,9 @@
   initSqlJs({locateFile: () => "./static/sql/sql-wasm.wasm"}).then(function (SQL) {
     fetch("./database.db").then(res => res.arrayBuffer()).then(buf => {
       const db = new SQL.Database(new Uint8Array(buf))
-      tagCountElem.innerText = db.exec("SELECT COUNT(*) FROM tag")[0].values[0]
-      postCountElem.innerText = db.exec("SELECT COUNT(*) FROM post")[0].values[0]
-      categoryCountElem.innerText = db.exec("SELECT COUNT(*) FROM category")[0].values[0]
+      tagCountElem.innerText = db.exec("SELECT COUNT(*) FROM tag")[0].values[0] + ''
+      postCountElem.innerText = db.exec("SELECT COUNT(*) FROM post")[0].values[0] + ''
+      categoryCountElem.innerText = db.exec("SELECT COUNT(*) FROM category")[0].values[0] + ''
       const postRandom = db.exec(
         "SELECT post_id,cover,title,post.summary,created_at,category.name AS categoryName FROM post JOIN category ON post.category_id = category.category_id ORDER BY RANDOM() LIMIT 6")[0]
         .values.map(item => ({

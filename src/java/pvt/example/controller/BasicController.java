@@ -1,12 +1,17 @@
 package pvt.example.controller;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pvt.example.common.config.GlobalVariable;
+import pvt.example.common.utils.AppUtil;
 import pvt.example.common.utils.FreemarkerUtil;
 import pvt.example.common.utils.SnowFlakeUtil;
 import pvt.example.pojo.vo.ResultVO;
@@ -19,6 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -81,15 +88,19 @@ public class BasicController extends BaseController {
         return successResultVO(basicService.changeIpHost(type, content, flag));
     }
 
+    /** 获取系统信息 */
     @GetMapping("/system-info")
     public ResultVO<Map<String, Map<String, String>>> getSystemInfo() { return successResultVO(basicService.getSystemInfo()); }
 
+    /** 获取雪花ID */
     @GetMapping("/snow-id")
     public ResultVO<Long> snowId() { return successResultVO(SnowFlakeUtil.nextId()); }
 
+    /** 获取应用名称(用于判断配置文件生效) */
     @GetMapping("/app-name")
     public String getAppName() { return appName; }
 
+    /** 获取contextPath路径 jsonp */
     @GetMapping("/get-path")
     public void getContextPath(@RequestParam(name = "callback", defaultValue = "contextPath", required = false) String callback,
                                HttpServletRequest request, HttpServletResponse response) {
@@ -103,32 +114,45 @@ public class BasicController extends BaseController {
         }
     }
 
+    /** 清除打包目录 */
     @GetMapping("/btn-clean")
     public ResultVO<Boolean> btnClean() { return successResultVO(basicService2.cleanDir()); }
 
-    // TODO 注意异步响应事件
+    // TODO 注意异步响应事件 | 准备完成 git push
     @GetMapping("/btn-push")
-    public ResultVO<String> btnPushEvent() {
+    public ResultVO<String> btnPushEvent() throws IOException {
+        // TODO 修改 basicService2.genFileDir();
+        // 采用 生成目录+git push方式; 两个方法; 最后再调用一个cleanDir方法
+        // 采用 生成目录+zip下载 ; 两个方法; 最后再调用一个cleanDir方法
+        File frontend = AppUtil.zipDirectory(AppUtil.getJarDirectory("frontend"),
+                                             AppUtil.getJarDirectory("frontend", "frontend.zip"));
+        System.out.println("frontend = " + frontend);
         return successResultVO("test");
     }
 
+    /** 非异步的文件下载(错误则json返回) */
     @GetMapping("/btn-download")
-    public ResultVO<String> btnDownloadEvent() {
-        if (globalVariable.getGenFileFlag()) { return successResultVO("正在处理中..."); }
+    public ResponseEntity<?> btnDownloadEvent() {
+        if (globalVariable.getGenFileFlag()) { return ResponseEntity.ok(successResultVO("正在处理中...")); }
         globalVariable.setGenFileFlag(true);
-        {// 异步执行
-            if (!basicService2.cleanDir()) { return successResultVO("清除失败"); }
-            if (!basicService2.createDir()) { return successResultVO("初始化目录失败"); }
-            if (!basicService2.handlerCopyTmpls()) { return successResultVO("Tmpls复制失败"); }
-            if (!basicService2.handlerDataBase()) { return successResultVO("表初始化失败"); }
-            if (!basicService2.handlerTmpls()) { return successResultVO("模版填充复制失败"); }
+        String flagStr = basicService2.genFileDir();
+        if (flagStr != null) {
             globalVariable.setGenFileFlag(false);
+            return ResponseEntity.ok(successResultVO(flagStr));
         }
-        return successResultVO("后台处理中...");
+        byte[] zipBytes = basicService2.zipFileDir();
+        globalVariable.setGenFileFlag(false);
+        if (zipBytes == null) { return ResponseEntity.ok(successResultVO("错误...")); }
+        HttpHeaders headers = new HttpHeaders();// 设置响应头
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"frontend.zip\"");
+        return ResponseEntity.ok().headers(headers).contentLength(zipBytes.length)
+                             .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                             .body(new InputStreamResource(new ByteArrayInputStream(zipBytes)));
     }
 
     @GetMapping("/test")
     public ResultVO<String> test() {
         System.out.println(FreemarkerUtil.generateString("post.ftl", null));
-        return successResultVO(null); }
+        return successResultVO(null);
+    }
 }
