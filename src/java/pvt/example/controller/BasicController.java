@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pvt.example.common.config.GlobalVariable;
-import pvt.example.common.utils.AppUtil;
-import pvt.example.common.utils.FreemarkerUtil;
 import pvt.example.common.utils.SnowFlakeUtil;
 import pvt.example.pojo.vo.ResultVO;
 import pvt.example.service.BasicAsyncService;
@@ -25,7 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -118,28 +115,35 @@ public class BasicController extends BaseController {
     @GetMapping("/btn-clean")
     public ResultVO<Boolean> btnClean() { return successResultVO(basicService2.cleanDir()); }
 
-    // TODO 注意异步响应事件 | 准备完成 git push
     @GetMapping("/btn-push")
     public ResultVO<String> btnPushEvent() throws IOException {
-        // TODO 修改 basicService2.genFileDir();
         // 采用 生成目录+git push方式; 两个方法; 最后再调用一个cleanDir方法
-        // 采用 生成目录+zip下载 ; 两个方法; 最后再调用一个cleanDir方法
-        File frontend = AppUtil.zipDirectory(AppUtil.getJarDirectory("frontend"),
-                                             AppUtil.getJarDirectory("frontend", "frontend.zip"));
-        System.out.println("frontend = " + frontend);
+        if (globalVariable.getGenFileFlag()) { return successResultVO("正在处理中..."); }
+        globalVariable.setGenFileFlag(true);
+        // 生成目录
+        String flagStr = basicService2.genFileDir();
+        if (flagStr != null) {
+            globalVariable.setGenFileFlag(false);
+            return successResultVO(flagStr);
+        }
+        // 目录git push
+        basicService2.gitPush();
         return successResultVO("test");
     }
 
     /** 非异步的文件下载(错误则json返回) */
     @GetMapping("/btn-download")
     public ResponseEntity<?> btnDownloadEvent() {
+        // 采用 生成目录+zip下载 ; 两个方法; 最后再调用一个cleanDir方法
         if (globalVariable.getGenFileFlag()) { return ResponseEntity.ok(successResultVO("正在处理中...")); }
         globalVariable.setGenFileFlag(true);
+        // 生成目录
         String flagStr = basicService2.genFileDir();
         if (flagStr != null) {
             globalVariable.setGenFileFlag(false);
             return ResponseEntity.ok(successResultVO(flagStr));
         }
+        // 目录zip打包
         byte[] zipBytes = basicService2.zipFileDir();
         globalVariable.setGenFileFlag(false);
         if (zipBytes == null) { return ResponseEntity.ok(successResultVO("错误...")); }
@@ -152,7 +156,7 @@ public class BasicController extends BaseController {
 
     @GetMapping("/test")
     public ResultVO<String> test() {
-        System.out.println(FreemarkerUtil.generateString("post.ftl", null));
+        basicService2.gitPush();
         return successResultVO(null);
     }
 }

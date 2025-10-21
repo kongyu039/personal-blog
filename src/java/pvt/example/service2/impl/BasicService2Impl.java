@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pvt.example.common.utils.AppUtil;
 import pvt.example.common.utils.FreemarkerUtil;
+import pvt.example.common.utils.GitUtil;
 import pvt.example.mapper.BaseMapper;
 import pvt.example.mapper.CategoryMapper;
 import pvt.example.mapper.PostMapper;
@@ -168,6 +169,7 @@ public class BasicService2Impl implements BasicService2 {
         return null;
     }
 
+    /** zip目录打包 */
     @Override
     public byte[] zipFileDir() {
         byte[] zipBytes;
@@ -189,5 +191,18 @@ public class BasicService2Impl implements BasicService2 {
             return null;
         }
         return zipBytes;
+    }
+
+    /** 目录 git push */
+    @Override
+    public void gitPush() {
+        GitUtil.pushSSH();
+        try {
+            if (!basicService2.cleanDir()) {
+                logger.debug("二次清除失败");
+            }
+        } catch (Exception e) {
+            logger.debug("二次清除失败");
+        }
     }
 }

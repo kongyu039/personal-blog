@@ -21,6 +21,7 @@
     <awssdk.version>2.27.13</awssdk.version> <!-- AWS SDK 版本 -->
     <oshi.version>6.6.5</oshi.version> <!-- oshi 版本 -->
     <jgit.version>5.13.3.202401111512-r</jgit.version> <!-- jGit 版本 -->
+    <jsch.version>0.2.21</jsch.version> <!-- jSCH/SSH 版本 -->
   </properties>
 
   <dependencyManagement>
@@ -90,17 +91,22 @@
       <artifactId>oshi-core</artifactId>
       <version>${oshi.version}</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit -->
-    <dependency>
-      <groupId>org.eclipse.jgit</groupId>
-      <artifactId>org.eclipse.jgit</artifactId>
-      <version>${jgit.version}</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit.ssh.jsch -->
+    <!-- jGit SSH -->
     <dependency>
       <groupId>org.eclipse.jgit</groupId>
       <artifactId>org.eclipse.jgit.ssh.jsch</artifactId>
       <version>${jgit.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.jcraft</groupId>
+          <artifactId>jsch</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.github.mwiede</groupId>
+      <artifactId>jsch</artifactId>
+      <version>${jsch.version}</version>
     </dependency>
     <!-- devtools热部署 -->
     <dependency>

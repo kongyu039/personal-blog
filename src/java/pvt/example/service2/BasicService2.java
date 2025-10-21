@@ -19,4 +19,6 @@ public interface BasicService2 {
     public Boolean handlerCopyTmpls();
 
     public Boolean handlerTmpls();
+
+    public void gitPush();
 }

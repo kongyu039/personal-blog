@@ -20,10 +20,38 @@
       }
     }, complete() {
       document.querySelector('.btn-push').addEventListener('click', (e) => {
+        $.ajax({
+          url: ctxUrl + "basic/btn-download", type: 'GET',
+          success(data, textStatus, jqXHR) {
+            // 检查响应的 Content-Type
+            const contentType = jqXHR.getResponseHeader('Content-Type')
+            console.log(`contentType: `, contentType)
+          },
+        })
         console.log("btn-push")
       })
       document.querySelector('.btn-download').addEventListener('click', (e) => {
-        console.log("btn-download")
+        const loadIndex = layer.msg('下载中...', {icon: 16, shade: 0.01})
+        $.ajax({
+          url: ctxUrl + "basic/btn-download", type: 'GET',
+          success(data, textStatus, jqXHR) {
+            // 检查响应的 Content-Type
+            const contentType = jqXHR.getResponseHeader('Content-Type')
+            if (contentType.includes('application/json')) { layer.msg(data['data'])}
+            if (contentType.includes('application/octet-stream')) {
+              const blob = new Blob([data], {type: contentType})
+              const url = window.URL.createObjectURL(blob)
+              const a = document.createElement('a')
+              a.href = url
+              a.download = 'frontend.zip' // 设置文件名
+              document.body.appendChild(a)
+              a.click()
+              a.remove()
+              window.URL.revokeObjectURL(url)
+            }
+            layer.close(loadIndex)
+          },
+        })
       })
       document.querySelectorAll("input[type='text'][name]").forEach((element) => {
         element.addEventListener('keydown', (/** @type {KeyboardEvent} */event) => {
