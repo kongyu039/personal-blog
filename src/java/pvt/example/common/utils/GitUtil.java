@@ -54,7 +54,7 @@ public class GitUtil {
             // 3. git add .
             git.add().addFilepattern(".").call();
             // 4. git commit -m xxx
-            git.commit().setMessage("init " + java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+            git.commit().setMessage("init " + java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
                .call();
             return git;
         } catch (GitAPIException e) {
