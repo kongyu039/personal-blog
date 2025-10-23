@@ -3,7 +3,7 @@ const dbJson = {
   name: "KongYu039",
   excerpt: "DO IT AGAIN",
   announcement: "今日公告内容2025年9月26日22:03:48",
-  siteUrl: "/",
+  siteUrl: "http://kongyu039.dpdns.org/",
   homeUrl: "/",
   aboutUrl: "/posts/2025/09/22/17585145870882.html",
   time: new Date("2025/09/09 12:00").getTime(),
