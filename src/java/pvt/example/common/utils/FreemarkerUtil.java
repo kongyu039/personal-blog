@@ -25,7 +25,6 @@ public class FreemarkerUtil {
         // 设置类路径下的模板目录
         // factoryBean.setTemplateLoaderPath("classpath:/tmpls/");
         // configuration.setClassLoaderForTemplateLoading();
-        // TODO 模版目录路径不对劲啊
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         TemplateLoader templateLoader = new ClassTemplateLoader(classLoader, "/tmpls/");
         configuration.setTemplateLoader(templateLoader);// 设置模板文件所在目录（classpath下的tmpls目录）

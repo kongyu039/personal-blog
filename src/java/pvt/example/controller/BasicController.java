@@ -116,7 +116,7 @@ public class BasicController extends BaseController {
     public ResultVO<Boolean> btnClean() { return successResultVO(basicService2.cleanDir()); }
 
     @GetMapping("/btn-push")
-    public ResultVO<String> btnPushEvent() throws IOException {
+    public ResultVO<String> btnPushEvent() {
         // 采用 生成目录+git push方式; 两个方法; 最后再调用一个cleanDir方法
         if (globalVariable.getGenFileFlag()) { return successResultVO("正在处理中..."); }
         globalVariable.setGenFileFlag(true);
@@ -152,11 +152,5 @@ public class BasicController extends BaseController {
         return ResponseEntity.ok().headers(headers).contentLength(zipBytes.length)
                              .contentType(MediaType.APPLICATION_OCTET_STREAM)
                              .body(new InputStreamResource(new ByteArrayInputStream(zipBytes)));
-    }
-
-    @GetMapping("/test")
-    public ResultVO<String> test() {
-        basicService2.gitPush();
-        return successResultVO(null);
     }
 }

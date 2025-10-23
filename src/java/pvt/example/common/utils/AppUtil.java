@@ -203,6 +203,7 @@ public class AppUtil {
                     // 先去遍历删除文件
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                        file.toFile().setWritable(true);
                         Files.delete(file);
                         return FileVisitResult.CONTINUE;
                     }
@@ -210,6 +211,7 @@ public class AppUtil {
                     // 再去遍历删除目录
                     @Override
                     public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                        dir.toFile().setWritable(true);
                         Files.delete(dir);
                         return FileVisitResult.CONTINUE;
                     }
@@ -217,6 +219,7 @@ public class AppUtil {
             }
             return true;
         } catch (IOException e) {
+            logger.error("Failed to delete: " + path + " due to: " + e.getMessage(), e);
             logger.debug(e.getMessage());
             return false;
         }

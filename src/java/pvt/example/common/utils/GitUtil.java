@@ -54,7 +54,8 @@ public class GitUtil {
             // 3. git add .
             git.add().addFilepattern(".").call();
             // 4. git commit -m xxx
-            git.commit().setMessage("init").call();
+            git.commit().setMessage("init " + java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+               .call();
             return git;
         } catch (GitAPIException e) {
             throw new RuntimeException(e);
@@ -71,10 +72,8 @@ public class GitUtil {
             UsernamePasswordCredentialsProvider provider = new UsernamePasswordCredentialsProvider(username, password);
             git.push().setRemote("origin").setCredentialsProvider(provider).setRefSpecs(
                     new RefSpec("master")).setForce(true).call();
-            git.clean().call();
-            git.rm().call();
         } catch (GitAPIException | IOException e) {
-            throw new RuntimeException(e);
+            System.err.println("An error occurred: " + e.getMessage());
         }
     }
 
@@ -100,10 +99,8 @@ public class GitUtil {
                 SshTransport sshTransport = (SshTransport) transport;
                 sshTransport.setSshSessionFactory(sshSessionFactory);
             }).setForce(true).setRefSpecs(new RefSpec("master")).call();
-            git.clean().call();
-            git.rm().call();
         } catch (GitAPIException | IOException e) {
-            throw new RuntimeException(e);
+            System.err.println("An error occurred: " + e.getMessage());
         }
     }
 }

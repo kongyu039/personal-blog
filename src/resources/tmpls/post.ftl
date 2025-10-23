@@ -18,7 +18,6 @@
   <script type="text/javascript" src="/static/sql/sql-wasm.min.js"></script>
   <link rel="stylesheet" href="/static/header.css">
   <link rel="stylesheet" href="/posts.css">
-  <!-- TODO SEO设置 -->
   <title>${post.title!"title内容"}</title>
 </head>
 <body>

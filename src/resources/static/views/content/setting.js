@@ -20,15 +20,21 @@
       }
     }, complete() {
       document.querySelector('.btn-push').addEventListener('click', (e) => {
+        let loadingIndex = layer.load(1, {shade: [0.8, '#FFFFFF'], content: 'git push中...'})
         $.ajax({
-          url: ctxUrl + "basic/btn-download", type: 'GET',
+          url: ctxUrl + "basic/btn-push", type: 'GET',
           success(data, textStatus, jqXHR) {
             // 检查响应的 Content-Type
             const contentType = jqXHR.getResponseHeader('Content-Type')
+            layer.msg("push 成功...")
+            layer.close(loadingIndex)
             console.log(`contentType: `, contentType)
           },
+          error() {
+            layer.close(loadingIndex)
+            layer.msg("push 失败...")
+          },
         })
-        console.log("btn-push")
       })
       document.querySelector('.btn-download').addEventListener('click', (e) => {
         const loadIndex = layer.msg('下载中...', {icon: 16, shade: 0.01})
